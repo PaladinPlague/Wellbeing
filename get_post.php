@@ -18,14 +18,14 @@ if(isset($_GET["date"])) {
   $dateTo = $dateHandler->modify('+1 day')->format("Y-m-d");
 
 
-  $sql = "SELECT posts.post_id, posts.title, users.username FROM posts, users WHERE posts.user_id = users.user_id AND timestamp >= '$dateFrom' AND timestamp < '$dateTo' ORDER BY timestamp DESC;";
+  $sql = "SELECT posts.title, posts.timestamp, users.username FROM posts, users WHERE posts.user_id = users.user_id AND timestamp >= '$dateFrom' AND timestamp < '$dateTo' ORDER BY timestamp DESC;";
 
   $result = execute_query($conn, $sql);
 
   $resultArray = [];
 
-  while ($row = $result->fetch_array()) {
-    $resultArray[$row["post_id"]] = ["title"=>$row["title"], "username"=>$row["username"]];
+  while ($row = $result->fetch_assoc()) {
+    array_push($resultArray, $row);
   }
 
 
@@ -34,11 +34,26 @@ if(isset($_GET["date"])) {
 } else if(isset($_GET["id"])) {
   $requestedId = $_GET["id"];
 
-  $sql = "SELECT posts.post_id, posts.title, posts.body, users.username FROM posts, users WHERE posts.user_id = users.user_id AND post_id='$requestedId';";
+  $sql = "SELECT posts.post_id, posts.title, posts.body, posts.timestamp, users.username FROM posts, users WHERE posts.user_id = users.user_id AND post_id='$requestedId';";
 
   $result = execute_query($conn, $sql);
 
   $row = $result->fetch_assoc();
+
+
+  $sql2 = "SELECT comments.text, users.username, comments.timestamp FROM comments, users WHERE comments.commenter_id = users.user_id AND comments.post_id ='$requestedId' ORDER BY timestamp DESC";
+
+  $result2 = execute_query($conn, $sql2);
+
+  $commentsArray = [];
+
+  while($commentRow = $result2->fetch_assoc()) {
+    array_push($commentsArray, $commentRow);
+  }
+
+  $row["comments"] = $commentsArray;
+
+
 
   echo $row ? json_encode($row) : "";
 
@@ -66,6 +81,8 @@ if(isset($_GET["date"])) {
 </script>
 <?php
 }
+
+$conn->close();
 ?>
 
 
