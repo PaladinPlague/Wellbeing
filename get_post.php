@@ -1,3 +1,12 @@
+<head>
+  <style>
+    img {
+      height:80vh;
+      width:auto;
+    }
+  </style>
+</head>
+<body>
 <?php
 require_once "database_query.php";
 $conn = createDBConnection();
@@ -19,8 +28,6 @@ if(isset($_GET["date"])) {
     $resultArray[$row["post_id"]] = ["title"=>$row["title"], "username"=>$row["username"]];
   }
 
-  //print_r($resultArray);
-
 
   echo $resultArray ? json_encode($resultArray) : "";
 
@@ -34,7 +41,32 @@ if(isset($_GET["date"])) {
   $row = $result->fetch_assoc();
 
   echo $row ? json_encode($row) : "";
+
+?>
+
+
+<br>
+<button onclick="document.getElementById('test').style.display = 'block';">Show image</button>
+<img id="test" src='#' style="display:none">
+
+</body>
+<script>
+  let xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function(){
+    if (this.readyState === 4 && this.status === 200){
+      let img = document.getElementById("test");
+      img.src = URL.createObjectURL(this.response);
+    }
+  }
+  xhr.open('GET', 'fetch_img.php?id="<?php echo $row["post_id"] ?>"');
+  xhr.responseType = 'blob';
+  xhr.send();
+
+
+</script>
+<?php
 }
+?>
 
 
 
