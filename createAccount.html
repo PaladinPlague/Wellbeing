@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account</title>
+</head>
+<body>
+<h1>Create an Account</h1>
+
+<!-- discuss what data we want to store in database (or just uname/pword) test comment ALSO CHECK FOR UNIQUE USERNAME-->
+<form id="createAccount" action="create_account.php" method="POST">
+
+    <p>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Enter Username" required>
+    </p>
+
+    <p>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter Password" required>
+    </p>
+
+<!--    <p>
+        <label for="rpassword">Repeat Password:</label>
+        <input type="password" id="rpassword" name="rpassword" placeholder="Repeat Password" required>
+    </p>-->
+
+    <p>
+        <a href="login.html" title="Login">Return to Login</a>
+    </p>
+
+    <p>
+        <input type="submit" value="Sign Up" class="submit_button">
+    </p>
+
+</form>
+</body>
+</html>
