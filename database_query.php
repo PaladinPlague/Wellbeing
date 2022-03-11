@@ -23,10 +23,10 @@ function execute_query($conn, $sql) {
     //execute the given query
     $result = $conn->query($sql);
 
-    if (!$result){
-        //die("Query failed");
-        //die("Query failed ".$conn->error); //FIXME error message
-    }
+  if (!$result){
+    //die("Query failed");
+    die("Query failed ".$conn->error); //FIXME error message
+  }
 
     return $result;
 }

@@ -1,10 +1,10 @@
 <?php
 function safePOST($conn, $name){
-    if (isset($_POST[$name])) {
-        return $conn->real_escape_string(strip_tags($_POST[$name]));
-    } else {
-        return "";
-    }
+  if (isset($_POST[$name])) {
+    return $conn->real_escape_string(strip_tags($_POST[$name]));
+  } else {
+    return "";
+  }
 }
 
 require_once "database_query.php";
@@ -20,15 +20,15 @@ $sql = "INSERT INTO users(username, password_hash) VALUES('$username', '$passwor
 
 
 if(strlen($username) <=255 && strlen($password) <= 255) {
-    $result = execute_query($conn, $sql);
+  $result = execute_query($conn, $sql);
 
-    if($result) {
-        echo 1;
-    } else {
-        echo 0;
-    }
-} else {
+  if($result) {
+    echo 1;
+  } else {
     echo 0;
+  }
+} else {
+  echo 0;
 }
 
 $conn->close();
