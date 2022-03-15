@@ -21,10 +21,6 @@
     </p>
 
     <p>
-        <a href="createAccount.html" title="Create account">Create an account</a>
-    </p>
-
-    <p>
         <input type="submit" value="Login" class="submit_button">
     </p>
 
@@ -37,48 +33,31 @@
     <a href="main.html">Main Page</a><br/>
 </div>
 </body>
+<script src="ajax.js"></script>
 <script>
-    function doAJAXPOST(functionToRun, formData){
-        // Initialize the HTTP request.
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', 'login.php');
+    function formSubmission(evt) {
+        evt.preventDefault();
+        document.getElementById("output").innerHTML = "Logging in..."
 
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) { // 4 means the request is finished, 200 means the request was successful
-                //execute the given function once the response is received
-                functionToRun(xhr.responseText);
+        let formData = new FormData();
+        formData.append("username", document.getElementById("username").value);
+        formData.append("password", document.getElementById("password").value);
+
+        function showResult(text) {
+            if(text === "1") {
+                document.getElementById("output").innerHTML = "Success!";
+                setTimeout(function() {window.location.href = "main.html"}, 1000);
+            } else {
+                document.getElementById("output").innerHTML = "Failed.";
             }
+
         }
 
-        // Send the request
-
-        xhr.send(formData);
+        doAJAXPOST("login.php", formData, showResult);
     }
 
-    document.getElementById("loginForm").addEventListener("submit",
 
-        function(evt) {
-            evt.preventDefault();
-            document.getElementById("output").innerHTML = "Logging in..."
-
-            let formData = new FormData();
-            formData.append("username", document.getElementById("username").value);
-            formData.append("password", document.getElementById("password").value);
-
-            function showResult(text) {
-                if(text === "1") {
-                    document.getElementById("output").innerHTML = "Success!";
-                    setTimeout(function() {window.location.href = "main.html"}, 1000);
-                } else {
-                    document.getElementById("output").innerHTML = "Failed.";
-                }
-
-            }
-
-            doAJAXPOST(showResult, formData);
-        }
-
-    );
+    document.getElementById("loginForm").addEventListener("submit", formSubmission);
 
 
 </script>

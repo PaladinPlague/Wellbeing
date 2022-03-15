@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Account</title>
+    <style>
+        #username_free_checkmark {
+            color:green;
+            font-weight:bold;
+            visibility:hidden;
+        }
+    </style>
 </head>
 <body>
 <h1>Create an Account</h1>
 
-<!-- discuss what data we want to store in database (or just uname/pword) test comment ALSO CHECK FOR UNIQUE USERNAME-->
 <form id="createAccountForm" action="#" method="POST">
-
     <p>
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" placeholder="Enter Username">
+        <span id="username_free_checkmark">&#10003;</span>
     </p>
 
     <p>
@@ -20,13 +26,9 @@
         <input type="password" id="password" name="password" placeholder="Enter Password">
     </p>
 
-<!--    <p>
-        <label for="rpassword">Repeat Password:</label>
-        <input type="password" id="rpassword" name="rpassword" placeholder="Repeat Password" required>
-    </p>-->
-
     <p>
-        <a href="login.html" title="Login">Return to Login</a>
+        <label for="confirm_password">Confirm Password:</label>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
     </p>
 
     <p>
@@ -41,49 +43,70 @@
     <a href="login.html">Login Page</a><br/>
 </div>
 </body>
+<script src="ajax.js"></script>
 <script>
-    function doAJAXPOST(functionToRun, formData){
-        // Initialize the HTTP request.
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', 'create_account.php');
+    function formSubmission(evt) {
+        evt.preventDefault();
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
 
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) { // 4 means the request is finished, 200 means the request was successful
-                //execute the given function once the response is received
-                functionToRun(xhr.responseText);
+        if(sessionStorage.getItem("free_username") === null) {
+            if (sessionStorage.getItem("lookup_in_progress") === null) {
+                document.getElementById("output").innerHTML = "Username taken."
+                return;
+            } else {
+                document.getElementById("output").innerHTML = "Please wait..."
+                return;
             }
         }
 
-        // Send the request
 
-        xhr.send(formData);
+        document.getElementById("output").innerHTML = "Creating account..."
+
+        let formData = new FormData();
+        formData.append("username", username);
+        formData.append("password", password);
+
+        function showResult(text) {
+            if(text === "1") {
+                document.getElementById("output").innerHTML = "Success!";
+                setTimeout(function() {window.location.href = "login.html"}, 1000);
+            } else {
+                document.getElementById("output").innerHTML = "Failed.";
+            }
+
+        }
+
+        doAJAXPOST('create_account.php', formData, showResult);
     }
 
-    document.getElementById("createAccountForm").addEventListener("submit",
+    document.getElementById("createAccountForm").addEventListener("submit", formSubmission);
 
-        function(evt) {
-            evt.preventDefault();
-            document.getElementById("output").innerHTML = "Logging in..."
 
-            let formData = new FormData();
-            formData.append("username", document.getElementById("username").value);
-            formData.append("password", document.getElementById("password").value);
+    function usernameLookup() {
+        sessionStorage.removeItem("free_username");
+        document.getElementById("username_free_checkmark").style.visibility = "hidden";
 
-            function showResult(text) {
-                if(text === "1") {
-                    document.getElementById("output").innerHTML = "Success!";
-                    setTimeout(function() {window.location.href = "login.html"}, 1000);
-                } else {
-                    document.getElementById("output").innerHTML = "Failed.";
-                }
+        let username = document.getElementById("username").value;
 
-            }
+        sessionStorage.setItem("lookup_in_progress","1");
+        doAJAXGET("username_lookup.php", "?username="+username, setUsernameFree);
+    }
 
-            doAJAXPOST(showResult, formData);
+    function setUsernameFree(response) {
+        sessionStorage.removeItem("lookup_in_progress");
+        let outputElement = document.getElementById("output");
+
+        if(outputElement.innerHTML === "Please wait...") {
+            outputElement.innerHTML = "Please try again.";
         }
 
-    );
+        if(response !== "") {
+            sessionStorage.setItem("free_username", response);
+            document.getElementById("username_free_checkmark").style.visibility = "visible";
+        }
+    }
 
-
+    document.getElementById("username").addEventListener("change", usernameLookup);
 </script>
 </html>
