@@ -29,6 +29,11 @@
   </p>
 
   <p>
+    <label for="anon">Post Anonymously?</label>
+    <input type="checkbox" id="anon" name="anon">
+  </p>
+
+  <p>
     <input type="submit" value="Post" class="submit_button">
   </p>
 
@@ -50,6 +55,7 @@
     formData.append("user_id", document.getElementById("user_id").value);
     formData.append("title", document.getElementById("title").value);
     formData.append("body", document.getElementById("body").value);
+    formData.append("anon", document.getElementById("anon").checked ? "1" : "0");
 
     let imgFile = document.getElementById("img").files[0]
     formData.append("img", imgFile, imgFile.name);

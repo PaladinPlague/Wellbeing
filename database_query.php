@@ -1,11 +1,10 @@
 <?php
 function createDBConnection() {
     //set up database connection
-    require_once "/home/nxb19193/DEVWEB/2021/password2.php";
 
     $hostname = "devweb2021.cis.strath.ac.uk";
     $username = "cs317madgroup17";
-    $password = get_password();
+    $password = "Dahjoh2niu9g";
     $database = $username;
 
     $conn = new mysqli($hostname, $username, $password, $database);
