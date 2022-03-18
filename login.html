@@ -8,20 +8,16 @@
 <h1>Login</h1>
 
 <! –– still to add forgot password, remember me, image possibly -->
-<form id="loginForm" action="login.php" method="POST">
+<form id="loginForm" action="#" method="POST">
 
     <p>
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" placeholder="Enter Username" required>
+        <input type="text" id="username" name="username" placeholder="Enter Username">
     </p>
 
     <p>
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Enter Password" required>
-    </p>
-
-    <p>
-        <a href="createAccount.html" title="Create account">Create an account</a>
+        <input type="password" id="password" name="password" placeholder="Enter Password">
     </p>
 
     <p>
@@ -29,5 +25,40 @@
     </p>
 
 </form>
+
+<p id="output"></p>
+
+<div id="tempNavBox">
+    <a href="createAccount.html">Create Account Page (create account link under login form)</a><br/>
+    <a href="main.html">Main Page</a><br/>
+</div>
 </body>
+<script src="ajax.js"></script>
+<script>
+    function formSubmission(evt) {
+        evt.preventDefault();
+        document.getElementById("output").innerHTML = "Logging in..."
+
+        let formData = new FormData();
+        formData.append("username", document.getElementById("username").value);
+        formData.append("password", document.getElementById("password").value);
+
+        function showResult(text) {
+            if(text === "1") {
+                document.getElementById("output").innerHTML = "Success!";
+                setTimeout(function() {window.location.href = "main.html"}, 1000);
+            } else {
+                document.getElementById("output").innerHTML = "Failed.";
+            }
+
+        }
+
+        doAJAXPOST("login.php", formData, showResult);
+    }
+
+
+    document.getElementById("loginForm").addEventListener("submit", formSubmission);
+
+
+</script>
 </html>

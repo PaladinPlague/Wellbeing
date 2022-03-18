@@ -23,24 +23,22 @@ $user_check_query = "SELECT * FROM users WHERE username='$username'";
 $result2 = execute_query($conn, $user_check_query);
 $user = mysqli_fetch_assoc($result2);
 
-if ($user) { // if user exists
-    if ($user['username'] === $username) {
-        //will work on making this part of the form.
-        echo("Username already exists.");
-        exit();
+if ($user && $user['username'] === $username) { // if user exists
+  echo 0;
+} else {
+  if(strlen($username) <=255 && strlen($password) <= 255) {
+    $result = execute_query($conn, $sql);
+
+    if($result) {
+      echo 1;
+    } else {
+      echo 0;
     }
-}
-
-if(strlen($username) <=255 && strlen($password) <= 255) {
-  $result = execute_query($conn, $sql);
-
-  if($result) {
-    echo 1;
   } else {
     echo 0;
   }
-} else {
-  echo 0;
 }
+
+
 
 $conn->close();
