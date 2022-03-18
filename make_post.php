@@ -23,11 +23,12 @@ $userId = safePOST($conn, "user_id");
 $title = safePOST($conn, "title");
 $body = safePOST($conn, "body");
 $img = isset($_FILES["img"]) ? $conn->real_escape_string(file_get_contents($_FILES["img"]["tmp_name"])) : "";
+$anonymous = safePOST($conn, "anon");
 
 $allValid = (strlen($title) < 255 && strlen($body) < 4000 && validateImage("img"));
 
 if($allValid) {
-  $sql = "INSERT INTO posts(user_id, title, body, img, timestamp) VALUES('$userId', '$title', '$body', '$img', CURRENT_TIMESTAMP);";
+  $sql = "INSERT INTO posts(user_id, title, body, img, anonymous, timestamp) VALUES('$userId', '$title', '$body', '$img', '$anonymous',CURRENT_TIMESTAMP);";
 
   $result = execute_query($conn, $sql);
 
