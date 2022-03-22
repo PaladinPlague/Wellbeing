@@ -44,8 +44,9 @@
         formData.append("password", document.getElementById("password").value);
 
         function showResult(text) {
-            if(text === "1") {
+            if(text !== "0") {
                 document.getElementById("output").innerHTML = "Success!";
+                window.localStorage.setItem("logged_in_id", text)
                 setTimeout(function() {window.location.href = "main.html"}, 1000);
             } else {
                 document.getElementById("output").innerHTML = "Failed.";

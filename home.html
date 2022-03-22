@@ -4,35 +4,25 @@
 <title>Healthy Living</title>
 <script>
 
-    function getTheData(params) {
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0');
-        var yyyy = today.getFullYear();
+    function getTheData() {
+        let today = new Date();
+        let dd = String(today.getDate()).padStart(2, '0');
+        let mm = String(today.getMonth() + 1).padStart(2, '0');
+        let yyyy = today.getFullYear();
 
-        var today = yyyy + "-" + mm + "-" + dd;
-        var httpc = new XMLHttpRequest();
-        var url = "get_post.php/?date="+today;
-        httpc.open("GET", url, true);
+        let todayString = yyyy + "-" + mm + "-" + dd;
+        let httpc = new XMLHttpRequest();
+        let url = "get_post.php/?date="+todayString;
+        httpc.open("GET", url);
 
         httpc.onreadystatechange = function() {
-            if(httpc.readyState == 4 && httpc.status == 200) {
+            if(httpc.readyState === 4 && httpc.status === 200) {
                 document.getElementById("p1").innerHTML = httpc.responseText;
             }
         };
-        httpc.send(params);
+        httpc.send();
     }
 
-    function loadData(){
-        $.ajax({
-            type: "GET",
-            url: "https://devweb2021.cis.strath.ac.uk/~tmb19188//Healthy/Healthy/get_post.php",
-            dataType: "json",
-            success:function (data){
-                alert(data);
-            }
-            });
-    }
 </script>
 
 <head>

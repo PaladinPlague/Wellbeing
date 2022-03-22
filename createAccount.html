@@ -50,8 +50,8 @@
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
 
-        if(sessionStorage.getItem("free_username") === null) {
-            if (sessionStorage.getItem("lookup_in_progress") === null) {
+        if(localStorage.getItem("free_username") === null) {
+            if (localStorage.getItem("lookup_in_progress") === null) {
                 document.getElementById("output").innerHTML = "Username taken."
                 return;
             } else {
@@ -70,6 +70,7 @@
         function showResult(text) {
             if(text === "1") {
                 document.getElementById("output").innerHTML = "Success!";
+                localStorage.removeItem("free_username");
                 setTimeout(function() {window.location.href = "login.html"}, 1000);
             } else {
                 document.getElementById("output").innerHTML = "Failed.";
@@ -84,17 +85,17 @@
 
 
     function usernameLookup() {
-        sessionStorage.removeItem("free_username");
+        localStorage.removeItem("free_username");
         document.getElementById("username_free_checkmark").style.visibility = "hidden";
 
         let username = document.getElementById("username").value;
 
-        sessionStorage.setItem("lookup_in_progress","1");
+        localStorage.setItem("lookup_in_progress","1");
         doAJAXGET("username_lookup.php", "?username="+username, setUsernameFree);
     }
 
     function setUsernameFree(response) {
-        sessionStorage.removeItem("lookup_in_progress");
+        localStorage.removeItem("lookup_in_progress");
         let outputElement = document.getElementById("output");
 
         if(outputElement.innerHTML === "Please wait...") {
@@ -102,7 +103,7 @@
         }
 
         if(response !== "") {
-            sessionStorage.setItem("free_username", response);
+            localStorage.setItem("free_username", response);
             document.getElementById("username_free_checkmark").style.visibility = "visible";
         }
     }
