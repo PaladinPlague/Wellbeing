@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nature App</title>
+
+  <!-- taken from CS317 templates -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<!--  <link rel="apple-touch-icon" sizes="128x128" href="images/icon-128.png">-->
+<!--  <link rel="icon" sizes="192x192" href="images/icon-192.png">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!--  normalise.css taken from https://necolas.github.io/normalize.css/ -->
+  <link rel="stylesheet" href="normalise.css">
+
+  <style>
+    h1 {
+      margin:0;
+    }
+
+    body {
+      font-size:8vmin;
+    }
+
+    #nav_bar {
+      width:100vw;
+      height:10vh;
+    }
+
+    .content {
+      width:100vw;
+      height:90vh;
+      display:none;
+    }
+
+    #red_content {
+      background-color:red;
+    }
+
+    #green_content {
+      background-color:rgba(0,255,0,0.4);
+      font-size:4vmin;
+    }
+
+    #blue_content {
+      background-color:rgba(0,0,255,0.4);
+      font-size:4vmin;
+    }
+
+    #username_free_checkmark {
+      color:green;
+      font-weight:bold;
+      visibility:hidden;
+    }
+  </style>
+</head>
+<body>
+<div id="nav_bar">
+  <a id="red_link" href="#">Red</a>
+  <a id="green_link" href="#">Green</a>
+  <a id="blue_link" href="#">Blue</a>
+
+</div>
+
+
+<div id="content">
+  <div id="red_content" class="content"></div>
+
+  <div id="green_content" class="content">
+    <h1>Login</h1>
+
+    <form id="loginForm" action="#" method="POST">
+
+      <p>
+        <label for="li_username">Username:</label>
+        <input type="text" id="li_username" name="li_username" placeholder="Enter Username">
+      </p>
+
+      <p>
+        <label for="li_password">Password:</label>
+        <input type="password" id="li_password" name="li_password" placeholder="Enter Password">
+      </p>
+
+      <p>
+        <input type="submit" value="Login" class="submit_button">
+      </p>
+
+    </form>
+
+    <p id="li_output"></p>
+
+  </div>
+
+  <div id="blue_content" class="content" style="display:block;">
+    <h1>Create an Account</h1>
+
+    <form id="createAccountForm" action="#" method="POST">
+      <p>
+        <label for="ca_username">Username:</label>
+        <input type="text" id="ca_username" name="ca_username" placeholder="Enter Username">
+        <span id="username_free_checkmark">&#10003;</span>
+      </p>
+
+      <p>
+        <label for="ca_password">Password:</label>
+        <input type="password" id="ca_password" name="ca_password" placeholder="Enter Password">
+      </p>
+
+      <p>
+        <label for="ca_confirm_password">Confirm Password:</label>
+        <input type="password" id="ca_confirm_password" name="ca_confirm_password" placeholder="Confirm Password">
+      </p>
+
+      <p>
+        <input type="submit" value="Sign Up" class="submit_button">
+      </p>
+
+    </form>
+
+    <p id="ca_output"></p>
+
+
+  </div>
+
+
+
+
+
+</div>
+<script src="model.js"></script>
+<script src="view.js"></script>
+<script src="controller.js"></script>
+</body>
+</html>

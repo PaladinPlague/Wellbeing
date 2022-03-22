@@ -16,12 +16,9 @@ $password = safePOST($conn, "password");
 
 $sql = "SELECT `user_id`, `password_hash` FROM `users` WHERE `username` = '$username'";
 $result = execute_query($conn, $sql);
+$row = $result->fetch_assoc();
 
-
-
-if ($result) {
-  $row = $result->fetch_assoc();
-
+if ($row) {
   if (password_verify($password, $row['password_hash'])) {
     echo $row['user_id'];
   } else {
