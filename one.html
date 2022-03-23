@@ -20,12 +20,14 @@
     }
 
     body {
-      font-size:8vmin;
+      font-size:4vmin;
     }
 
     #nav_bar {
       width:100vw;
       height:10vh;
+      background-color:rgba(255,0,128);
+      font-size:6vmin;
     }
 
     .content {
@@ -33,19 +35,6 @@
       height:90vh;
       display:none;
       font-size:4vmin;
-    }
-
-    #red_content {
-      background-color:rgba(255,0,0,0.4);
-    }
-
-    #green_content {
-      background-color:rgba(0,255,0,0.4);
-
-    }
-
-    #blue_content {
-      background-color:rgba(0,0,255,0.4);
     }
 
     #username_free_checkmark {
@@ -57,15 +46,15 @@
 </head>
 <body>
 <div id="nav_bar">
-  <a id="red_link" href="#">Red</a>
-  <a id="green_link" href="#">Green</a>
-  <a id="blue_link" href="#">Blue</a>
+  <a id="mp_link" href="#">Make Post</a>
+  <a id="li_link" href="#">Login</a>
+  <a id="ca_link" href="#">Create Account</a>
 
 </div>
 
 
 <div id="content">
-  <div id="red_content" class="content">
+  <div id="mp_content" class="content">
     <h1>Make Post</h1>
     <form id="postSubmissionForm" action="#" method="POST" enctype="multipart/form-data">
       <p>
@@ -103,7 +92,7 @@
 
   </div>
 
-  <div id="green_content" class="content">
+  <div id="li_content" class="content">
     <h1>Login</h1>
 
     <form id="loginForm" action="#" method="POST">
@@ -128,7 +117,7 @@
 
   </div>
 
-  <div id="blue_content" class="content" style="display:block;">
+  <div id="ca_content" class="content" style="display:block;">
     <h1>Create an Account</h1>
 
     <form id="createAccountForm" action="#" method="POST">

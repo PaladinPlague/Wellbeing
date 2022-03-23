@@ -117,9 +117,9 @@ view.setUpLoginFormSubmissionHandler(li_formSubmission);
 view.setUpMakePostFormSubmissionHandler(mp_formSubmission);
 
 
-document.getElementById("red_link").addEventListener("click", () => {view.switchWindow("red_content");});
-document.getElementById("green_link").addEventListener("click", () => {view.switchWindow("green_content");});
-document.getElementById("blue_link").addEventListener("click", () => {view.switchWindow("blue_content");});
+document.getElementById("mp_link").addEventListener("click", () => {view.switchWindow("mp_content");});
+document.getElementById("li_link").addEventListener("click", () => {view.switchWindow("li_content");});
+document.getElementById("ca_link").addEventListener("click", () => {view.switchWindow("ca_content");});
 
 // view.setUpCalculatorButtonsClickHandlers(calculatorButtonPressed);
 // view.setUpGroupSizeButtonsClickHandlers(groupSizeButtonPressed);

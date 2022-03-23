@@ -3,7 +3,7 @@
 class View {
   constructor() {
     this.checkmarkElement = document.getElementById("username_free_checkmark");
-    this.shown = document.getElementById("blue_content");
+    this.shown = document.getElementById("ca_content");
   }
 
   checkmark(action) {
