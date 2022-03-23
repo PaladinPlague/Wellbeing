@@ -53,10 +53,10 @@ class Model {
     this.usernameLookupAJAXHandler = handler;
   }
 
-  createAccountFormSubmission(username, password) {
+  createAccountFormSubmission(data) {
     let formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
+    formData.append("username", data.username);
+    formData.append("password", data.password);
 
     this.doAJAXPOST('create_account.php', formData, this.createAccountAJAXHandler);
   }
@@ -65,10 +65,10 @@ class Model {
     this.createAccountAJAXHandler = handler;
   }
 
-  loginFormSubmission(username, password) {
+  loginFormSubmission(data) {
     let formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
+    formData.append("username", data.username);
+    formData.append("password", data.password);
 
     this.doAJAXPOST("login.php", formData, this.loginAJAXHandler);
   }
@@ -80,5 +80,25 @@ class Model {
   setLoggedInId(id) {
     this.loggedInId = id;
     localStorage.setItem("logged_in_id",id);
+  }
+
+  makePostFormSubmission(data) {
+
+    let formData = new FormData();
+    formData.append("user_id", data.user_id);
+    formData.append("title", data.title);
+    formData.append("body", data.body);
+    formData.append("anon", data.anon);
+
+    if(data.img) {
+      formData.append("img", data.img, data.img.name);
+    }
+
+
+    this.doAJAXPOST("make_post.php", formData, this.makePostAJAXHandler);
+  }
+
+  setMakePostAJAXHandler(handler) {
+    this.makePostAJAXHandler = handler;
   }
 }

@@ -32,20 +32,20 @@
       width:100vw;
       height:90vh;
       display:none;
+      font-size:4vmin;
     }
 
     #red_content {
-      background-color:red;
+      background-color:rgba(255,0,0,0.4);
     }
 
     #green_content {
       background-color:rgba(0,255,0,0.4);
-      font-size:4vmin;
+
     }
 
     #blue_content {
       background-color:rgba(0,0,255,0.4);
-      font-size:4vmin;
     }
 
     #username_free_checkmark {
@@ -65,7 +65,43 @@
 
 
 <div id="content">
-  <div id="red_content" class="content"></div>
+  <div id="red_content" class="content">
+    <h1>Make Post</h1>
+    <form id="postSubmissionForm" action="#" method="POST" enctype="multipart/form-data">
+      <p>
+        <label for="mp_user_id">User Id:</label>
+        <input type="text" id="mp_user_id" name="mp_user_id">
+        <span style="color:red;">(TEMPORARY UNTIL LOGINS ARE WORKING)</span>
+      </p>
+
+      <p>
+        <label for="mp_title">Title:</label>
+        <input type="text" id="mp_title" name="mp_title">
+      </p>
+
+      <p>
+        <label for="mp_body">Body:</label>
+        <input type="text" id="mp_body" name="mp_body">
+      </p>
+
+      <p>
+        <label for="mp_img">Upload File:</label>
+        <input type="file" id="mp_img" name="mp_img" accept="image/jpeg,image/png,image/heif">
+      </p>
+
+      <p>
+        <label for="mp_anon">Post Anonymously?</label>
+        <input type="checkbox" id="mp_anon" name="mp_anon">
+      </p>
+
+      <p>
+        <input type="submit" id="mp_submit" value="Post" class="submit_button">
+      </p>
+
+    </form>
+    <p id="mp_output"></p>
+
+  </div>
 
   <div id="green_content" class="content">
     <h1>Login</h1>
@@ -83,7 +119,7 @@
       </p>
 
       <p>
-        <input type="submit" value="Login" class="submit_button">
+        <input type="submit" id="li_submit" value="Login" class="submit_button">
       </p>
 
     </form>
@@ -113,7 +149,7 @@
       </p>
 
       <p>
-        <input type="submit" value="Sign Up" class="submit_button">
+        <input type="submit" id="ca_submit" value="Sign Up" class="submit_button">
       </p>
 
     </form>

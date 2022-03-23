@@ -25,7 +25,7 @@ $body = safePOST($conn, "body");
 $img = isset($_FILES["img"]) ? $conn->real_escape_string(file_get_contents($_FILES["img"]["tmp_name"])) : "";
 $anonymous = safePOST($conn, "anon");
 
-$allValid = (strlen($title) < 255 && strlen($body) < 4000 && validateImage("img"));
+$allValid = (strlen($title) < 255 && strlen($body) < 4000 && ($img === "" || validateImage("img")));
 
 if($allValid) {
   $sql = "INSERT INTO posts(user_id, title, body, img, anonymous, timestamp) VALUES('$userId', '$title', '$body', '$img', '$anonymous',CURRENT_TIMESTAMP);";

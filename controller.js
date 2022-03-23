@@ -7,7 +7,6 @@ const view = new View();
 
 
 function ca_usernameChangeHandler() {
-  console.log("Change");
   view.checkmark("hide");
   model.usernameLookup(view.ca_getUsername());
 }
@@ -20,7 +19,7 @@ function ca_usernameLookupResponseHandler(response) {
       model.freeUsername = response;
       view.checkmark("show");
     }
-    console.log(model.impatient);
+
     if(model.impatient) {
       view.autoSubmitCreate();
       model.impatient = false;
@@ -31,35 +30,33 @@ function ca_usernameLookupResponseHandler(response) {
 
 function ca_formSubmission(evt) {
   evt.preventDefault();
-  let username = view.ca_getUsername();
-  let password = view.ca_getPassword();
 
   if(model.freeUsername === "") {
     if (model.usernameLookupInProgress === 0) {
-      view.ca_showOutput("Username taken.");
+      view.showOutput("ca_","Username taken.");
       return;
     } else {
-      view.ca_showOutput("Please wait...");
+      view.showOutput("ca_","Please wait...");
       model.impatient = true;
       return;
     }
   }
 
-  view.ca_showOutput("Creating account...");
+  view.showOutput("ca_","Creating account...");
 
   view.ca_disabled(true);
 
-  model.createAccountFormSubmission(username, password);
+  model.createAccountFormSubmission(view.ca_getData());
 }
 
 function ca_showResult(response) {
   if(response === "1") {
-    view.ca_showOutput("Success!")
+    view.showOutput("ca_","Success!");
     model.freeUsername = "";
     setTimeout(function() {console.log("login.html"); view.ca_disabled(false);}, 1000);
     //setTimeout(function() {window.location.href = "login.html"}, 1000);
   } else {
-    view.ca_showOutput("Failed.");
+    view.showOutput("ca_","Failed.");
     view.ca_disabled(false);
   }
 
@@ -67,25 +64,44 @@ function ca_showResult(response) {
 
 function li_formSubmission(evt) {
   evt.preventDefault();
-  view.li_showOutput("Logging in...");
+  view.showOutput("li_","Logging in...");
 
-  let username = view.li_getUsername();
-  let password = view.li_getPassword();
 
   view.li_disabled("true");
 
-  model.loginFormSubmission(username, password);
+  model.loginFormSubmission(view.li_getData());
+
 }
 
 function li_showResult(text) {
   if(text !== "0") {
-    view.li_showOutput("Success!")
+    view.showOutput("li_","Success!")
     model.setLoggedInId(text)
     setTimeout(function() {console.log("main.html"); view.li_disabled(false);}, 1000);
     //setTimeout(function() {window.location.href = "main.html"}, 1000);
   } else {
-    view.li_showOutput("Failed.");
+    view.showOutput("li_","Failed.");
     view.li_disabled(false);
+  }
+}
+
+function mp_formSubmission(evt) {
+  evt.preventDefault();
+  view.showOutput("mp_","Posting...");
+
+  view.mp_disabled(true);
+
+  model.makePostFormSubmission(view.mp_getData());
+}
+
+function mp_showResult(text) {
+  if(text === "1") {
+    view.showOutput("mp_","Success!");
+    setTimeout(function() {console.log("post_details.html"); view.mp_disabled(false);}, 1000);
+  } else {
+    view.showOutput("mp_","Failed.");
+    view.mp_disabled(false);
+    console.log(text);
   }
 
 }
@@ -93,9 +109,12 @@ function li_showResult(text) {
 model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
 model.setCreateAccountAJAXHandler(ca_showResult)
 model.setLoginAJAXHandler(li_showResult);
+model.setMakePostAJAXHandler(mp_showResult);
+
 view.setUpUsernameChangeHandler(ca_usernameChangeHandler);
 view.setUpCreateFormSubmissionHandler(ca_formSubmission);
 view.setUpLoginFormSubmissionHandler(li_formSubmission);
+view.setUpMakePostFormSubmissionHandler(mp_formSubmission);
 
 
 document.getElementById("red_link").addEventListener("click", () => {view.switchWindow("red_content");});
