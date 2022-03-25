@@ -3,7 +3,6 @@
 class View {
   constructor() {
     this.checkmarkElement = document.getElementById("username_free_checkmark");
-    this.shown = document.getElementById("ca_content");
   }
 
   checkmark(action) {
@@ -41,10 +40,9 @@ class View {
     return data;
   }
 
-  switchWindow(div_id) {
-    this.shown.style.display = "none";
-    this.shown = document.getElementById(div_id);
-    this.shown.style.display = "block";
+  switchVisible(hideIt, showIt) {
+    document.getElementById(hideIt).style.display = "none";
+    document.getElementById(showIt).style.display = "block";
   }
 
   autoSubmitCreate() {
@@ -82,8 +80,6 @@ class View {
     document.getElementById("mp_submit").disabled = bool;
   }
 
-
-
   clearError(prefix) {
     let errorElement = document.getElementById(prefix+"error");
     if(errorElement) {
@@ -120,5 +116,10 @@ class View {
   clearForm(prefix) {
     document.getElementById(prefix+"form").reset();
     this.showOutput(prefix, "");
+  }
+
+  logout_showBrowse() {
+    document.getElementById("pd_content").style.display = "none";
+    document.getElementById("bp_content").style.display = "block";
   }
 }

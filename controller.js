@@ -57,7 +57,7 @@ function ca_showResult(response) {
   if(response === "1") {
     view.showOutput("ca_","Success!");
     model.freeUsername = "";
-    setTimeout(function() {console.log("login.html"); view.ca_disabled(false);  view.clearForm("ca_");}, 1000);
+    setTimeout(function() {view.switchVisible("ca_content", "li_content"); view.ca_disabled(false);  view.clearForm("ca_");}, 1000);
     //setTimeout(function() {window.location.href = "login.html"}, 1000);
   } else {
     view.showOutput("ca_","Failed.");
@@ -74,7 +74,6 @@ function li_formSubmission(evt) {
   if(li_validation(data)) {
     view.showOutput("li_","Logging in...");
 
-
     view.li_disabled("true");
 
     model.loginFormSubmission(data);
@@ -85,7 +84,7 @@ function li_showResult(text) {
   if(text !== "0") {
     view.showOutput("li_","Success!")
     model.setLoggedInId(text)
-    setTimeout(function() {console.log("main.html"); view.li_disabled(false); view.clearForm("li_");}, 1000);
+    setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.clearForm("li_");}, 1000);
     //setTimeout(function() {window.location.href = "main.html"}, 1000);
   } else {
     view.showOutput("li_","Failed.");
@@ -111,11 +110,11 @@ function mp_formSubmission(evt) {
 function mp_showResult(text) {
   if(text === "1") {
     view.showOutput("mp_","Success!");
-    setTimeout(function() {console.log("post_details.html"); view.mp_disabled(false); view.clearForm("mp_");}, 1000);
+    //TODO lookup details for the post that was just posted
+    setTimeout(function() {view.switchVisible("makepost_container", "browse_container"); view.switchVisible("bp_content", "pd_content"); view.mp_disabled(false); view.clearForm("mp_");}, 1000);
   } else {
     view.showOutput("mp_","Failed.");
     view.mp_disabled(false);
-    console.log(text);
   }
 }
 
@@ -224,23 +223,35 @@ function mp_validation(data) {
   return errorMessage === "";
 }
 
-model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
-model.setCreateAccountAJAXHandler(ca_showResult)
-model.setLoginAJAXHandler(li_showResult);
-model.setMakePostAJAXHandler(mp_showResult);
+function allHandlers() {
+  model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
+  model.setCreateAccountAJAXHandler(ca_showResult)
+  model.setLoginAJAXHandler(li_showResult);
+  model.setMakePostAJAXHandler(mp_showResult);
 
-view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
-view.setUpHandler("ca_form", "submit", ca_formSubmission);
-view.setUpHandler("li_form", "submit", li_formSubmission);
-view.setUpHandler("mp_form", "submit", mp_formSubmission);
+  view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
+  view.setUpHandler("ca_form", "submit", ca_formSubmission);
+  view.setUpHandler("li_form", "submit", li_formSubmission);
+  view.setUpHandler("mp_form", "submit", mp_formSubmission);
 
-view.setUpHandler("ca_form", "change", () => {view.clearError("ca_")});
-view.setUpHandler("li_form", "change", () => {view.clearError("li_")});
-view.setUpHandler("mp_form", "change", () => {view.clearError("mp_")});
+  view.setUpHandler("ca_form", "change", () => {view.clearError("ca_")});
+  view.setUpHandler("li_form", "change", () => {view.clearError("li_")});
+  view.setUpHandler("mp_form", "change", () => {view.clearError("mp_")});
 
-view.setUpHandler("ca_show_password", "click", () => {view.ca_showPasswordToggle()});
-view.setUpHandler("li_show_password", "click", () => {view.li_showPasswordToggle()});
+  view.setUpHandler("ca_show_password", "click", () => {view.ca_showPasswordToggle()});
+  view.setUpHandler("li_show_password", "click", () => {view.li_showPasswordToggle()});
 
-view.setUpHandler("mp_link", "click", () => {view.switchWindow("mp_content");});
-view.setUpHandler("li_link", "click", () => {view.switchWindow("li_content");});
-view.setUpHandler("ca_link", "click", () => {view.switchWindow("ca_content");});
+  // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
+  view.setUpHandler("temp_acc", "click", () => {view.switchVisible("li_content", "ca_content")});
+  view.setUpHandler("temp_golog", "click", () => {view.switchVisible("ca_content", "li_content")});
+  view.setUpHandler("temp_logout1", "click", () => {view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post1", "click", () => {view.switchVisible("browse_container", "makepost_container")});
+  view.setUpHandler("temp_details", "click", () => {view.switchVisible("bp_content", "pd_content")});
+  view.setUpHandler("temp_logout2", "click", () => {view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post2", "click", () => {view.switchVisible("browse_container", "makepost_container")});
+  view.setUpHandler("temp_browse", "click", () => {view.switchVisible("pd_content", "bp_content")});
+  view.setUpHandler("temp_logout3", "click", () => {view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
+  view.setUpHandler("temp_main", "click", () => {view.switchVisible("makepost_container", "browse_container")});
+}
+
+allHandlers();

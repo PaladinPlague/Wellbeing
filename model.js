@@ -25,7 +25,6 @@ class Model {
     xhr.send(formData);
   }
 
-
   doAJAXGET(url, params, handler) {
     // Initialize the HTTP request.
     let xhr = new XMLHttpRequest();
