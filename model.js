@@ -85,7 +85,7 @@ class Model {
   makePostFormSubmission(data) {
 
     let formData = new FormData();
-    formData.append("user_id", data.user_id);
+    formData.append("user_id", this.loggedInId);
     formData.append("title", data.title);
     formData.append("body", data.body);
     formData.append("anon", data.anon);
@@ -94,11 +94,12 @@ class Model {
       formData.append("img", data.img, data.img.name);
     }
 
-
     this.doAJAXPOST("make_post.php", formData, this.makePostAJAXHandler);
   }
 
   setMakePostAJAXHandler(handler) {
     this.makePostAJAXHandler = handler;
   }
+
+
 }

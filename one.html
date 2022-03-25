@@ -49,20 +49,13 @@
   <a id="mp_link" href="#">Make Post</a>
   <a id="li_link" href="#">Login</a>
   <a id="ca_link" href="#">Create Account</a>
-
 </div>
 
 
 <div id="content">
   <div id="mp_content" class="content">
     <h1>Make Post</h1>
-    <form id="postSubmissionForm" action="#" method="POST" enctype="multipart/form-data">
-      <p>
-        <label for="mp_user_id">User Id:</label>
-        <input type="text" id="mp_user_id" name="mp_user_id">
-        <span style="color:red;">(TEMPORARY UNTIL LOGINS ARE WORKING)</span>
-      </p>
-
+    <form id="mp_form" action="#" method="POST" enctype="multipart/form-data">
       <p>
         <label for="mp_title">Title:</label>
         <input type="text" id="mp_title" name="mp_title">
@@ -95,7 +88,7 @@
   <div id="li_content" class="content">
     <h1>Login</h1>
 
-    <form id="loginForm" action="#" method="POST">
+    <form id="li_form" action="#" method="POST">
 
       <p>
         <label for="li_username">Username:</label>
@@ -105,6 +98,11 @@
       <p>
         <label for="li_password">Password:</label>
         <input type="password" id="li_password" name="li_password" placeholder="Enter Password">
+      </p>
+
+      <p>
+        <label for="li_show_password">Show password</label>
+        <input type="checkbox" id="li_show_password">
       </p>
 
       <p>
@@ -120,7 +118,7 @@
   <div id="ca_content" class="content" style="display:block;">
     <h1>Create an Account</h1>
 
-    <form id="createAccountForm" action="#" method="POST">
+    <form id="ca_form" action="#" method="POST">
       <p>
         <label for="ca_username">Username:</label>
         <input type="text" id="ca_username" name="ca_username" placeholder="Enter Username">
@@ -135,6 +133,11 @@
       <p>
         <label for="ca_confirm_password">Confirm Password:</label>
         <input type="password" id="ca_confirm_password" name="ca_confirm_password" placeholder="Confirm Password">
+      </p>
+
+      <p>
+        <label for="ca_show_password">Show password</label>
+        <input type="checkbox" id="ca_show_password">
       </p>
 
       <p>
