@@ -14,16 +14,16 @@ $conn = createDBConnection();
 $username = safePOST($conn, "username");
 $password = safePOST($conn, "password");
 
-$passwordHash = $password ? password_hash($password, PASSWORD_DEFAULT) : "";
+$passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
 $sql = "INSERT INTO users(username, password_hash) VALUES('$username', '$passwordHash')";
 
 
 $user_check_query = "SELECT * FROM users WHERE username='$username'";
-$result2 = execute_query($conn, $user_check_query);
-$user = mysqli_fetch_assoc($result2);
+$result = execute_query($conn, $user_check_query);
+$row = $result->fetch_assoc();
 
-if ($user && $user['username'] === $username) { // if user exists
+if ($row && $row['username'] === $username) { // if user exists
   echo 0;
 } else {
   if(strlen($username) <=255 && strlen($password) <= 255) {

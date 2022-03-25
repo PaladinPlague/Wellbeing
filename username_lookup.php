@@ -17,7 +17,7 @@ $username = safeGET($conn, "username");
 $sql = "SELECT `username` FROM `users` WHERE `username` = '$username'";
 $result = execute_query($conn, $sql);
 
-sleep(1);
+sleep(3);
 
 if ($result->num_rows == 0) {
   echo $username;

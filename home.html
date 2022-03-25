@@ -22,7 +22,7 @@
     }
     function doAJAX(functionToRun){
         for(let i = 0; i < 30; i++){
-            var today = getDate();
+            let today = getDate();
             let xhr = new XMLHttpRequest();
             xhr.open('get', 'get_post.php?date='+today);
 
