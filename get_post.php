@@ -9,7 +9,7 @@ if(isset($_GET["date"])) {
   $dateTo = $dateHandler->modify('+1 day')->format("Y-m-d");
 
 
-  $sql = "SELECT posts.title, posts.timestamp, posts.anonymous, users.username FROM posts, users WHERE posts.user_id = users.user_id AND timestamp >= '$dateFrom' AND timestamp < '$dateTo' ORDER BY timestamp DESC;";
+  $sql = "SELECT posts.post_id, posts.title, posts.timestamp, posts.anonymous, users.username FROM posts, users WHERE posts.user_id = users.user_id AND timestamp >= '$dateFrom' AND timestamp < '$dateTo' ORDER BY timestamp DESC;";
 
   $result = execute_query($conn, $sql);
 
