@@ -82,13 +82,7 @@ class Model {
     this.loginAJAXHandler = handler;
   }
 
-  setLoggedInId(id) {
-    this.loggedInId = id;
-    localStorage.setItem("logged_in_id",id);
-  }
-
   makePostFormSubmission(data) {
-
     let formData = new FormData();
     formData.append("user_id", this.loggedInId);
     formData.append("title", data.title);
@@ -154,4 +148,14 @@ class Model {
     return this.initialFill;
   }
 
+
+  login(id) {
+    this.loggedInId = id;
+    localStorage.setItem("logged_in_id",id);
+  }
+
+  logout() {
+    this.loggedInId = -1;
+    localStorage.removeItem("logged_in_id");
+  }
 }

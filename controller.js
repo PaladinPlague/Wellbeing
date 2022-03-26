@@ -83,7 +83,7 @@ function li_formSubmission(evt) {
 function li_showResult(text) {
   if(text !== "0") {
     view.showOutput("li_","Success!")
-    model.setLoggedInId(text)
+    model.login(text)
     setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.clearForm("li_"); model.getPosts();}, 1000);
     //setTimeout(function() {window.location.href = "main.html"}, 1000);
   } else {
@@ -244,13 +244,13 @@ function allHandlers() {
   // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
   view.setUpHandler("temp_acc", "click", () => {view.switchVisible("li_content", "ca_content")});
   view.setUpHandler("temp_golog", "click", () => {view.switchVisible("ca_content", "li_content")});
-  view.setUpHandler("temp_logout1", "click", () => {view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_logout1", "click", () => {model.logout(); view.switchVisible("browse_container", "login_container")});
   view.setUpHandler("temp_post1", "click", () => {view.switchVisible("browse_container", "makepost_container")});
   view.setUpHandler("temp_details", "click", () => {view.switchVisible("bp_content", "pd_content")});
-  view.setUpHandler("temp_logout2", "click", () => {view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_logout2", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
   view.setUpHandler("temp_post2", "click", () => {view.switchVisible("browse_container", "makepost_container")});
   view.setUpHandler("temp_browse", "click", () => {view.switchVisible("pd_content", "bp_content")});
-  view.setUpHandler("temp_logout3", "click", () => {view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
+  view.setUpHandler("temp_logout3", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
   view.setUpHandler("temp_main", "click", () => {view.switchVisible("makepost_container", "browse_container")});
 }
 
