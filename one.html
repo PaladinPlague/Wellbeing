@@ -28,6 +28,8 @@
       height:10%;
       background-color:rgba(255,0,128);
       font-size:6vmin;
+      box-sizing: border-box;
+      border-bottom: 1.5vmin solid rgba(158,0,79);
     }
 
     .content_container {
@@ -40,6 +42,7 @@
       width:100%;
       height:100%;
       display:none;
+      position:relative;
     }
 
     #username_free_checkmark {
@@ -63,6 +66,21 @@
     .displayed_post {
       background: white;
     }
+
+    #newPopup {
+      position:absolute;
+      top:10vh;
+      width:80%;
+      margin:5% 10%;
+      display:none;
+      padding:2%;
+      text-align:center;
+      background-color:blue;
+      color:white;
+      box-sizing: border-box;
+      border:1vmin solid #40A0ff;
+    }
+
   </style>
 </head>
 <body>
@@ -147,10 +165,16 @@
       <a id="temp_logout1" href="#" style="color:blue">Logout</a>
       <a id="temp_post1" href="#" style="color:blue">Let Me Post</a>
       <a id="temp_details" href="#" style="color:green">Details</a>
+      <a id="temp_totop" href="#" style="color:green">Top</a>
     </div>
 
     <div id="scrollingElement">
+      <div id="status_message"></div>
     </div>
+
+    <div id="newPopup">There Are New Posts</div>
+
+
   </div>
 
   <div id="pd_content" class="content">
@@ -160,7 +184,10 @@
       <a id="temp_browse" href="#" style="color:green">Browse</a>
     </div>
 
-    <p>PD Here is a specific post</p>
+    <div id="post_details_display">
+      <p>PD Here is a specific post</p>
+    </div>
+
   </div>
 </div>
 
@@ -184,7 +211,7 @@
 
       <p>
         <label for="mp_img">Upload File:</label>
-        <input type="file" id="mp_img" name="mp_img" accept="image/jpeg,image/png,image/heif">
+        <input type="file" id="mp_img" name="mp_img" accept="image/jpeg,image/png">
       </p>
 
       <p>

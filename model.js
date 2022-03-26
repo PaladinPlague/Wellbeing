@@ -11,7 +11,8 @@ class Model {
     this.getPostInProgress = false;
     this.lastPostDate = null;
     this.initialFill = true;
-
+    this.gotAllPosts = false;
+    this.newestPostsInterval = null;
   }
 
   doAJAXPOST(url, formData, handler){
@@ -111,6 +112,7 @@ class Model {
       this.doAJAXGET("get_post.php", "?date="+this.getLookupDateString(), this.getPostsAJAXHAndler);
     } else {
       this.getPostInProgress = false;
+      this.gotAllPosts = true;
     }
 
   }
@@ -148,7 +150,6 @@ class Model {
     return this.initialFill;
   }
 
-
   login(id) {
     this.loggedInId = id;
     localStorage.setItem("logged_in_id",id);
@@ -157,5 +158,35 @@ class Model {
   logout() {
     this.loggedInId = -1;
     localStorage.removeItem("logged_in_id");
+    this.freeUsername = "";
+    this.usernameLookupInProgress = 0;
+    this.impatient = false;
+    this.mostRecentTimestamp = "";
+    this.lastUpdateDate = null;
+    this.getPostInProgress = false;
+    this.initialFill = true;
+    this.gotAllPosts = false;
+    clearInterval(this.newestPostsInterval);
+  }
+
+  constructBrowsePostContent(currentPostObj) {
+    let currentPostContent = "<p>";
+
+    currentPostContent += currentPostObj.title + "<br/>";
+    currentPostContent += "By: " + currentPostObj.username + "<br/>";
+    if(currentPostObj.hasImg) {
+      currentPostContent += "<img alt='" + currentPostObj.title + "'  src='fetch_img.php?id=" + currentPostObj.post_id + "'>";
+    }
+    currentPostContent += "Posted: " + currentPostObj.timestamp +"</p>";
+
+    return currentPostContent;
+  }
+
+  setGetNewestPostsAJAXHandler(handler) {
+    this.getNewestPostsAJAXHandler = handler;
+  }
+
+  getNewestPosts() {
+    this.doAJAXGET("get_post.php", "?newest=" + encodeURIComponent(this.mostRecentTimestamp), this.getNewestPostsAJAXHandler);
   }
 }

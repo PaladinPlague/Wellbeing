@@ -12,6 +12,10 @@ function ca_usernameChangeHandler() {
 }
 
 function ca_usernameLookupResponseHandler(response) {
+  if(model.loggedInId !== -1) {
+    return;
+  }
+
   model.usernameLookupInProgress -= 1;
 
   if(model.usernameLookupInProgress === 0) {
@@ -54,6 +58,10 @@ function ca_formSubmission(evt) {
 }
 
 function ca_showResult(response) {
+  if(model.loggedInId !== -1) {
+    return;
+  }
+
   if(response === "1") {
     view.showOutput("ca_","Success!");
     model.freeUsername = "";
@@ -63,6 +71,7 @@ function ca_showResult(response) {
     view.showOutput("ca_","Failed.");
     view.ca_disabled(false);
   }
+
 
 }
 
@@ -81,10 +90,14 @@ function li_formSubmission(evt) {
 }
 
 function li_showResult(text) {
+  if(model.loggedInId !== -1) {
+    return;
+  }
+
   if(text !== "0") {
     view.showOutput("li_","Success!")
     model.login(text)
-    setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.clearForm("li_"); model.getPosts();}, 1000);
+    setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.fullReset(); model.getPosts();}, 1000);
     //setTimeout(function() {window.location.href = "main.html"}, 1000);
   } else {
     view.showOutput("li_","Failed.");
@@ -108,6 +121,10 @@ function mp_formSubmission(evt) {
 }
 
 function mp_showResult(text) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
   if(text === "1") {
     view.showOutput("mp_","Success!");
     //TODO lookup details for the post that was just posted
@@ -116,6 +133,7 @@ function mp_showResult(text) {
     view.showOutput("mp_","Failed.");
     view.mp_disabled(false);
   }
+
 }
 
 function ca_validation(data) {
@@ -224,38 +242,68 @@ function mp_validation(data) {
 }
 
 function bp_showResult(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
   if(!json_response) {
     model.getPosts();
     return;
   }
 
+  view.showLoadingMessage(false);
   model.getPostInProgress = false;
   let allPosts = JSON.parse(json_response);
 
   for(let i=0; i<allPosts.length; i++) {
     let currentPostObj = {post_id:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined};
     currentPostObj = allPosts[i];
-    let currentPostContent = "<p>";
 
-    currentPostContent += currentPostObj.title + "<br/>";
-    currentPostContent += "By: " + currentPostObj.username + "<br/>";
-    if(currentPostObj.hasImg) {
-      currentPostContent += "<img alt='" + currentPostObj.title + "'  src='fetch_img.php?id=" + currentPostObj.post_id + "' >";
+    if(model.mostRecentTimestamp === "") {
+      model.mostRecentTimestamp = currentPostObj.timestamp;
     }
-    currentPostContent += "Posted: " + currentPostObj.timestamp +"</p>";
 
-
-    view.appendPost(currentPostObj.post_id, currentPostContent);
+    view.appendPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj));
   }
 
+  view.showLoadingMessage(true);
 
   if(model.isInitiallyFilling()) {
     if(view.isNotScroll()) {
       model.getPosts();
     } else {
       model.initialFillDone();
+      model.newestPostsInterval = setInterval(()=>{model.getNewestPosts()}, 10000); //check for new posts every 10 secs
     }
   }
+}
+
+function bp_showNewest(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  if(!json_response) {
+    console.log(model.mostRecentTimestamp);
+    return;
+  }
+
+  let scrollPosition = view.distanceFromBottom();
+
+  let allPosts = JSON.parse(json_response);
+
+  let currentPostObj = {post_id:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined};
+
+  for(let i=0; i<allPosts.length; i++) {
+    currentPostObj = allPosts[i];
+    view.prependPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj));
+  }
+
+  model.mostRecentTimestamp = currentPostObj.timestamp; //the last post fetched
+  view.scrollFromBottom(scrollPosition);
+
+  view.displayNewPostMessage(true);
+  setTimeout(()=>{view.displayNewPostMessage(false)}, 3000);
 }
 
 function infiniteScrollLookup() {
@@ -263,12 +311,22 @@ function infiniteScrollLookup() {
     if(model.getPostInProgress === false) {
       model.getPostInProgress = true;
       model.getPosts();
+
+      if(model.gotAllPosts) {
+        view.showNoMorePosts();
+      }
     }
   }
 }
 
 function getLastPostDateAJAXHandler(text) {
   model.lastPostDate = new Date(text);
+}
+
+function clearNewPostMessage() {
+  if(view.nearTop()) {
+    view.displayNewPostMessage(false);
+  }
 }
 
 function allHandlers() {
@@ -278,6 +336,7 @@ function allHandlers() {
   model.setMakePostAJAXHandler(mp_showResult);
   model.setGetPostsAJAXHandler(bp_showResult);
   model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
+  model.setGetNewestPostsAJAXHandler(bp_showNewest);
 
   view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
   view.setUpHandler("ca_form", "submit", ca_formSubmission);
@@ -291,21 +350,21 @@ function allHandlers() {
   view.setUpHandler("ca_show_password", "click", () => {view.ca_showPasswordToggle()});
   view.setUpHandler("li_show_password", "click", () => {view.li_showPasswordToggle()});
 
-  view.setUpHandler("scrollingElement", "scroll", () =>{infiniteScrollLookup();});
+  view.setUpHandler("scrollingElement", "scroll", () =>{clearNewPostMessage(); infiniteScrollLookup();});
 
   // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
-  view.setUpHandler("temp_acc", "click", () => {view.switchVisible("li_content", "ca_content")});
-  view.setUpHandler("temp_golog", "click", () => {view.switchVisible("ca_content", "li_content")});
-  view.setUpHandler("temp_logout1", "click", () => {model.logout(); view.switchVisible("browse_container", "login_container")});
-  view.setUpHandler("temp_post1", "click", () => {view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_details", "click", () => {view.switchVisible("bp_content", "pd_content")});
-  view.setUpHandler("temp_logout2", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
-  view.setUpHandler("temp_post2", "click", () => {view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_browse", "click", () => {view.switchVisible("pd_content", "bp_content")});
-  view.setUpHandler("temp_logout3", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
-  view.setUpHandler("temp_main", "click", () => {view.switchVisible("makepost_container", "browse_container")});
+  view.setUpHandler("temp_acc", "click", (ev) => {ev.preventDefault(); view.switchVisible("li_content", "ca_content")});
+  view.setUpHandler("temp_golog", "click", (ev) => {ev.preventDefault(); view.switchVisible("ca_content", "li_content")});
+  view.setUpHandler("temp_logout1", "click", (ev) => {ev.preventDefault(); model.logout(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post1", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
+  view.setUpHandler("temp_details", "click", (ev) => {ev.preventDefault(); view.switchVisible("bp_content", "pd_content")});
+  view.setUpHandler("temp_totop", "click", (ev) => {ev.preventDefault(); view.scrollTop();});
+  view.setUpHandler("temp_logout2", "click", (ev) => {ev.preventDefault(); model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post2", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
+  view.setUpHandler("temp_browse", "click", (ev) => {ev.preventDefault(); view.switchVisible("pd_content", "bp_content")});
+  view.setUpHandler("temp_logout3", "click", (ev) => {ev.preventDefault(); model.logout(); view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
+  view.setUpHandler("temp_main", "click", (ev) => {ev.preventDefault(); view.switchVisible("makepost_container", "browse_container")});
 }
 
 allHandlers();
-
 model.getLastPostDate();

@@ -2,14 +2,16 @@
 
 class View {
   constructor() {
-    this.checkmarkElement = document.getElementById("username_free_checkmark");
+
   }
 
   checkmark(action) {
+    let checkmarkElement = document.getElementById("username_free_checkmark");
+
     if(action === "hide") {
-      this.checkmarkElement.style.visibility = "hidden";
+      checkmarkElement.style.visibility = "hidden";
     } else if(action === "show") {
-      this.checkmarkElement.style.visibility = "visible";
+      checkmarkElement.style.visibility = "visible";
     }
   }
 
@@ -135,5 +137,65 @@ class View {
   hitBottom() {
     let element = document.getElementById("scrollingElement");
     return element.scrollHeight -(element.scrollTop + element.clientHeight) <= 1;
+  }
+
+  scrollTop() {
+    document.getElementById("scrollingElement").scrollTop = 0;
+  }
+
+  displayNewPostMessage(displayIt) {
+    let newPostMessageElement = document.getElementById("newPopup");
+
+    if(displayIt) {
+      this.newPostMessageDisplayed = true;
+      newPostMessageElement.style.display = "block";
+    } else {
+      this.newPostMessageDisplayed = false;
+      newPostMessageElement.style.display = "none";
+    }
+  }
+
+  prependPost(id, content) {
+    let se = document.getElementById("scrollingElement");
+    se.innerHTML = "<div class='displayed_post' id='" + id + "'>" + content + "</div>" + se.innerHTML;
+  }
+
+  distanceFromBottom() {
+    let se = document.getElementById("scrollingElement");
+    return se.scrollHeight-se.scrollTop;
+  }
+
+  scrollFromBottom(distance) {
+    let se = document.getElementById("scrollingElement");
+    se.scrollTo(0, se.scrollHeight - distance);
+  }
+
+  nearTop() {
+    return document.getElementById("scrollingElement").scrollTop <= 5;
+  }
+
+  clearBrowseContent() {
+    document.getElementById("scrollingElement").innerHTML = "<div id=\"status_message\">Loading...</div>";
+    document.getElementById("post_details_display").innerHTML = "";
+  }
+
+  fullReset() {
+    this.clearForm("ca_");
+    this.clearForm("li_");
+    this.checkmark("hide");
+    this.clearForm("mp_");
+    this.clearBrowseContent();
+  }
+
+  showLoadingMessage(show) {
+    if(show) {
+      document.getElementById("scrollingElement").innerHTML += "<div id=\"status_message\">Loading...</div>";
+    } else {
+      document.getElementById("status_message").remove();
+    }
+  }
+
+  showNoMorePosts() {
+    document.getElementById("status_message").innerHTML = "No more posts!";
   }
 }

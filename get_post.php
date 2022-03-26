@@ -9,6 +9,34 @@ if(isset($_GET["last"])) {
 
   echo substr($row["timestamp"],0,10);
 
+} else if(isset($_GET["newest"])) {
+  $newest = $_GET["newest"];
+
+
+  $sql = "SELECT posts.post_id, posts.title, posts.timestamp, posts.anonymous, posts.img, users.username FROM posts, users WHERE posts.user_id = users.user_id AND timestamp > '$newest'ORDER BY timestamp ASC;";
+
+  $result = execute_query($conn, $sql);
+
+  $resultArray = [];
+
+  while ($row = $result->fetch_assoc()) {
+    $anonymous = $row["anonymous"];
+    unset($row["anonymous"]);
+
+
+    $hasImg = $row["img"] !== "";
+    unset($row["img"]);
+
+    if($anonymous) {
+      $row["username"] = "Anonymous";
+    }
+
+    $row["hasImg"] = $hasImg;
+
+    $resultArray[] = $row;
+  }
+
+  echo $resultArray ? json_encode($resultArray) : "";
 } else if(isset($_GET["date"])) {
   $requestedDate = $_GET["date"];
   $dateHandler = new DateTime($requestedDate);
