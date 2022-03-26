@@ -84,7 +84,7 @@ function li_showResult(text) {
   if(text !== "0") {
     view.showOutput("li_","Success!")
     model.setLoggedInId(text)
-    setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.clearForm("li_");}, 1000);
+    setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.clearForm("li_"); model.getPosts();}, 1000);
     //setTimeout(function() {window.location.href = "main.html"}, 1000);
   } else {
     view.showOutput("li_","Failed.");
@@ -255,3 +255,71 @@ function allHandlers() {
 }
 
 allHandlers();
+
+
+function bp_showResult(json_response) {
+  model.getPostInProgress = false;
+
+  if(!json_response) {
+    model.getPostInProgress = true;
+    model.getPosts();
+    return;
+  }
+
+
+  let allPosts = JSON.parse(json_response);
+
+  for(let i=0; i<allPosts.length; i++) {
+    let currentPostObj = {post_id:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined};
+    currentPostObj = allPosts[i];
+    let currentPostContent = "<p>";
+
+    currentPostContent += currentPostObj.title + "<br/>";
+    currentPostContent += "By: " + currentPostObj.username + "<br/>";
+    if(currentPostObj.hasImg) {
+      currentPostContent += "<img alt='" + currentPostObj.title + "'  src='fetch_img.php?id=" + currentPostObj.post_id + "' >";
+    }
+    currentPostContent += "Posted: " + currentPostObj.timestamp +"</p>";
+
+
+    view.append_post(currentPostObj.post_id, currentPostContent);
+  }
+
+
+  if(model.isInitiallyFilling()) {
+    let se = document.getElementById("scrollingElement");
+    let more = (se.clientHeight === se.scrollHeight);
+
+    if(more) {
+      model.getPosts();
+    } else {
+      model.initialFillDone();
+      document.getElementById("scrollingElement").addEventListener("scroll", () =>{
+        let element = document.getElementById("scrollingElement");
+        if(element.scrollHeight -(element.scrollTop + element.clientHeight) <= 1 ) {
+          infiniteScrollLookup();
+        }
+      })
+    }
+  }
+
+
+
+
+}
+
+model.setGetPostsAJAXHandler(bp_showResult);
+
+function infiniteScrollLookup() {
+  if(model.getPostInProgress === false) {
+    model.getPostInProgress = true;
+    model.getPosts();
+  }
+}
+
+function getLastPostDateAJAXHandler(text) {
+  model.lastPostDate = new Date(text);
+}
+model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
+
+model.getLastPostDate();

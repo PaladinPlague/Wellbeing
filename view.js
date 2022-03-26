@@ -122,4 +122,8 @@ class View {
     document.getElementById("pd_content").style.display = "none";
     document.getElementById("bp_content").style.display = "block";
   }
+
+  append_post(id, content) {
+    document.getElementById("scrollingElement").innerHTML += "<div class='displayed_post' id='" + id + "'>" + content + "</div>";
+  }
 }

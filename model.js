@@ -6,6 +6,12 @@ class Model {
     this.freeUsername = "";
     this.impatient = false;
     this.loggedInId = -1;
+    this.mostRecentTimestamp = "";
+    this.lastUpdateDate = null;
+    this.getPostInProgress = false;
+    this.lastPostDate = null;
+    this.initialFill = true;
+
   }
 
   doAJAXPOST(url, formData, handler){
@@ -100,5 +106,52 @@ class Model {
     this.makePostAJAXHandler = handler;
   }
 
+  getPosts() {
+    if(this.lastUpdateDate === null) {
+      this.lastUpdateDate = new Date();
+    } else {
+      this.lastUpdateDate.setDate(this.lastUpdateDate.getDate() - 1);
+    }
+
+    if(!this.isPastLastPost(this.getLookupDateString())) {
+      this.doAJAXGET("get_post.php", "?date="+this.getLookupDateString(), this.getPostsAJAXHAndler);
+    } else {
+      this.getPostInProgress = false;
+    }
+
+  }
+
+  setGetPostsAJAXHandler(handler) {
+    this.getPostsAJAXHAndler = handler;
+  }
+
+  getLookupDateString() {
+    let dd = String(this.lastUpdateDate.getDate()).padStart(2, '0');
+    let mm = String(this.lastUpdateDate.getMonth() + 1).padStart(2, '0');
+    let yyyy = this.lastUpdateDate.getFullYear();
+
+    return yyyy + "-" + mm + "-" + dd;
+  }
+
+  getLastPostDate() {
+    this.doAJAXGET("get_post.php", "?last=true", this.getLastPostDateAJAXHandler);
+  }
+
+  isPastLastPost(currentDateString) {
+    let currentDate = new Date(currentDateString);
+    return this.lastPostDate > currentDate;
+  }
+
+  setGetLastPostDateAJAXHandler(handler) {
+    this.getLastPostDateAJAXHandler = handler;
+  }
+
+  initialFillDone() {
+    this.initialFill = false;
+  }
+
+  isInitiallyFilling() {
+    return this.initialFill;
+  }
 
 }
