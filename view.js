@@ -123,7 +123,17 @@ class View {
     document.getElementById("bp_content").style.display = "block";
   }
 
-  append_post(id, content) {
+  appendPost(id, content) {
     document.getElementById("scrollingElement").innerHTML += "<div class='displayed_post' id='" + id + "'>" + content + "</div>";
+  }
+
+  isNotScroll() {
+    let se = document.getElementById("scrollingElement");
+    return se.clientHeight >= se.scrollHeight;
+  }
+
+  hitBottom() {
+    let element = document.getElementById("scrollingElement");
+    return element.scrollHeight -(element.scrollTop + element.clientHeight) <= 1;
   }
 }

@@ -223,50 +223,13 @@ function mp_validation(data) {
   return errorMessage === "";
 }
 
-function allHandlers() {
-  model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
-  model.setCreateAccountAJAXHandler(ca_showResult)
-  model.setLoginAJAXHandler(li_showResult);
-  model.setMakePostAJAXHandler(mp_showResult);
-
-  view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
-  view.setUpHandler("ca_form", "submit", ca_formSubmission);
-  view.setUpHandler("li_form", "submit", li_formSubmission);
-  view.setUpHandler("mp_form", "submit", mp_formSubmission);
-
-  view.setUpHandler("ca_form", "change", () => {view.clearError("ca_")});
-  view.setUpHandler("li_form", "change", () => {view.clearError("li_")});
-  view.setUpHandler("mp_form", "change", () => {view.clearError("mp_")});
-
-  view.setUpHandler("ca_show_password", "click", () => {view.ca_showPasswordToggle()});
-  view.setUpHandler("li_show_password", "click", () => {view.li_showPasswordToggle()});
-
-  // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
-  view.setUpHandler("temp_acc", "click", () => {view.switchVisible("li_content", "ca_content")});
-  view.setUpHandler("temp_golog", "click", () => {view.switchVisible("ca_content", "li_content")});
-  view.setUpHandler("temp_logout1", "click", () => {model.logout(); view.switchVisible("browse_container", "login_container")});
-  view.setUpHandler("temp_post1", "click", () => {view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_details", "click", () => {view.switchVisible("bp_content", "pd_content")});
-  view.setUpHandler("temp_logout2", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
-  view.setUpHandler("temp_post2", "click", () => {view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_browse", "click", () => {view.switchVisible("pd_content", "bp_content")});
-  view.setUpHandler("temp_logout3", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
-  view.setUpHandler("temp_main", "click", () => {view.switchVisible("makepost_container", "browse_container")});
-}
-
-allHandlers();
-
-
 function bp_showResult(json_response) {
-  model.getPostInProgress = false;
-
   if(!json_response) {
-    model.getPostInProgress = true;
     model.getPosts();
     return;
   }
 
-
+  model.getPostInProgress = false;
   let allPosts = JSON.parse(json_response);
 
   for(let i=0; i<allPosts.length; i++) {
@@ -282,44 +245,67 @@ function bp_showResult(json_response) {
     currentPostContent += "Posted: " + currentPostObj.timestamp +"</p>";
 
 
-    view.append_post(currentPostObj.post_id, currentPostContent);
+    view.appendPost(currentPostObj.post_id, currentPostContent);
   }
 
 
   if(model.isInitiallyFilling()) {
-    let se = document.getElementById("scrollingElement");
-    let more = (se.clientHeight === se.scrollHeight);
-
-    if(more) {
+    if(view.isNotScroll()) {
       model.getPosts();
     } else {
       model.initialFillDone();
-      document.getElementById("scrollingElement").addEventListener("scroll", () =>{
-        let element = document.getElementById("scrollingElement");
-        if(element.scrollHeight -(element.scrollTop + element.clientHeight) <= 1 ) {
-          infiniteScrollLookup();
-        }
-      })
     }
   }
-
-
-
-
 }
 
-model.setGetPostsAJAXHandler(bp_showResult);
-
 function infiniteScrollLookup() {
-  if(model.getPostInProgress === false) {
-    model.getPostInProgress = true;
-    model.getPosts();
+  if(view.hitBottom()) {
+    if(model.getPostInProgress === false) {
+      model.getPostInProgress = true;
+      model.getPosts();
+    }
   }
 }
 
 function getLastPostDateAJAXHandler(text) {
   model.lastPostDate = new Date(text);
 }
-model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
+
+function allHandlers() {
+  model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
+  model.setCreateAccountAJAXHandler(ca_showResult)
+  model.setLoginAJAXHandler(li_showResult);
+  model.setMakePostAJAXHandler(mp_showResult);
+  model.setGetPostsAJAXHandler(bp_showResult);
+  model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
+
+  view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
+  view.setUpHandler("ca_form", "submit", ca_formSubmission);
+  view.setUpHandler("li_form", "submit", li_formSubmission);
+  view.setUpHandler("mp_form", "submit", mp_formSubmission);
+
+  view.setUpHandler("ca_form", "change", () => {view.clearError("ca_")});
+  view.setUpHandler("li_form", "change", () => {view.clearError("li_")});
+  view.setUpHandler("mp_form", "change", () => {view.clearError("mp_")});
+
+  view.setUpHandler("ca_show_password", "click", () => {view.ca_showPasswordToggle()});
+  view.setUpHandler("li_show_password", "click", () => {view.li_showPasswordToggle()});
+
+  view.setUpHandler("scrollingElement", "scroll", () =>{infiniteScrollLookup();});
+
+  // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
+  view.setUpHandler("temp_acc", "click", () => {view.switchVisible("li_content", "ca_content")});
+  view.setUpHandler("temp_golog", "click", () => {view.switchVisible("ca_content", "li_content")});
+  view.setUpHandler("temp_logout1", "click", () => {model.logout(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post1", "click", () => {view.switchVisible("browse_container", "makepost_container")});
+  view.setUpHandler("temp_details", "click", () => {view.switchVisible("bp_content", "pd_content")});
+  view.setUpHandler("temp_logout2", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post2", "click", () => {view.switchVisible("browse_container", "makepost_container")});
+  view.setUpHandler("temp_browse", "click", () => {view.switchVisible("pd_content", "bp_content")});
+  view.setUpHandler("temp_logout3", "click", () => {model.logout(); view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
+  view.setUpHandler("temp_main", "click", () => {view.switchVisible("makepost_container", "browse_container")});
+}
+
+allHandlers();
 
 model.getLastPostDate();
