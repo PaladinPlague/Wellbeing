@@ -6,7 +6,7 @@
 </head>
 <body>
 <a href="home.html">Back to home</a><br/>
-<header id="post_header"></header>
+<div id="post_header"></div>
 <div id="post_image"></div>
 <div id="comments">
 <p>Comments</p>
@@ -38,7 +38,7 @@
       else
         document.getElementById("post_title").textContent = parsed_data.username + "'s Post";
 
-      document.getElementById("post_header").textContent = parsed_data.username + "    " + parsed_data.timestamp;
+      document.getElementById("post_header").innerHTML = "<p>" + parsed_data.username + "    " + parsed_data.timestamp + "</p><p>" + parsed_data.title + "</p>";
 
       for(let i=0; parsed_data.comments.length; i++)
         document.getElementById("comments").innerHTML += "<p>" + parsed_data.comments[i].username + " | "
