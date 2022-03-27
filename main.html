@@ -11,6 +11,16 @@
   <a href="make_post.html">Post Page</a><br/>
   <a href="post_details.html">Post Details</a><br/>
   <a href="login.html">Login Page (for if you signed out)</a><br/>
+  <input id="logout" type='button' onclick='logout();' value='Logout'/>
+  <script type="text/javascript">
+    function logout() {
+      let conf = confirm("Do you really want to log out?");
+      if (conf) {
+        window.location.href = 'login.html'
+      }
+    }
+  </script>
+
 </div>
 </body>
 </html>

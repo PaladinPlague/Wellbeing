@@ -49,6 +49,7 @@
         evt.preventDefault();
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
+        let confirm_password = document.getElementById("confirm_password").value;
 
         if(localStorage.getItem("free_username") === null) {
             if (localStorage.getItem("lookup_in_progress") === null) {
@@ -60,6 +61,10 @@
             }
         }
 
+        if (password !== confirm_password) {
+            document.getElementById("output").innerHTML = "Passwords do not match."
+            return;
+        }
 
         document.getElementById("output").innerHTML = "Creating account..."
 

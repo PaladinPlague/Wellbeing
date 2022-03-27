@@ -7,7 +7,6 @@
 <body>
 <h1>Login</h1>
 
-<! –– still to add forgot password, remember me, image possibly -->
 <form id="loginForm" action="#" method="POST">
 
     <p>
@@ -22,6 +21,11 @@
 
     <p>
         <input type="submit" value="Login" class="submit_button">
+    </p>
+
+    <p>
+        <label for="remember_me">Remember me:</label>
+        <input id="remember_me" type="checkbox" checked="checked" name="remember_me">
     </p>
 
 </form>
@@ -42,6 +46,7 @@
         let formData = new FormData();
         formData.append("username", document.getElementById("username").value);
         formData.append("password", document.getElementById("password").value);
+        formData.append("remember_me", document.getElementById("remember_me").checked);
 
         function showResult(text) {
             if(text !== "0") {
