@@ -2,13 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Post Details</title>
+  <title id="post_title"></title>
 </head>
 <body>
-<p>The post details page</p>
-
-<div id="tempNavBox">
-  <a href="main.html">Main Page</a><br/>
+<a href="home.html">Back to home</a><br/>
+<header id="post_header"></header>
+<div id="post_image"></div>
+<div id="comments">
+<p>Comments</p>
 </div>
+
 </body>
+
+<script>
+  var url = decodeURIComponent(window.location.href),
+  regex = new RegExp("[?&]" + "post_id" + "=([^&#]*)"),
+  match = regex.exec(url),
+  post_id = match ? match[1] : "",
+  commentsArray;
+
+  parse = function(data) { return JSON.parse(data.responseText) };
+
+  document.getElementById("post_image").innerHTML = "<img onerror='this.style.display=\"none\"' src='fetch_img.php?id=" + post_id + "'><br>";
+  onerror="this.style.display='none'"
+
+  http = new XMLHttpRequest();
+  http.open("GET", "get_post.php?id=" + post_id);
+  http.onreadystatechange = function() {
+
+    if (http.readyState == 4 && http.status == 200) {
+      parsed_data = parse(http);
+
+      if((parsed_data.username == "Anonymous"))
+        document.getElementById("post_title").textContent = "Anonymous Post";
+      else
+        document.getElementById("post_title").textContent = parsed_data.username + "'s Post";
+
+      document.getElementById("post_header").textContent = parsed_data.username + "    " + parsed_data.timestamp;
+
+      for(let i=0; parsed_data.comments.length; i++)
+        document.getElementById("comments").innerHTML += "<p>" + parsed_data.comments[i].username + " | "
+                + parsed_data.comments[i].text + " | " + parsed_data.comments[i].timestamp + "</p>";
+
+      }
+  };
+  http.send();
+
+
+</script>
 </html>
