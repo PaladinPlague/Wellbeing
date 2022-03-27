@@ -97,6 +97,12 @@ function li_showResult(text) {
   if(text !== "0") {
     view.showOutput("li_","Success!")
     model.login(text)
+
+    if(model.rememberMe) {
+      localStorage.setItem("logged_in_id",text);
+    }
+
+
     setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.fullReset(); model.getPosts();}, 1000);
     //setTimeout(function() {window.location.href = "main.html"}, 1000);
   } else {
@@ -284,7 +290,6 @@ function bp_showNewest(json_response) {
   }
 
   if(!json_response) {
-    console.log(model.mostRecentTimestamp);
     return;
   }
 
@@ -329,6 +334,15 @@ function clearNewPostMessage() {
   }
 }
 
+function tryAutomaticLogin() {
+  if(localStorage.getItem("logged_in_id")) {
+    let id = localStorage.getItem("logged_in_id");
+    model.login(id);
+    view.switchVisible("login_container", "browse_container");
+    model.getPosts();
+  }
+}
+
 function allHandlers() {
   model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
   model.setCreateAccountAJAXHandler(ca_showResult)
@@ -368,3 +382,4 @@ function allHandlers() {
 
 allHandlers();
 model.getLastPostDate();
+tryAutomaticLogin();

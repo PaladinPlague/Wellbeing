@@ -38,6 +38,7 @@ class View {
     let data = {};
     data["username"] = document.getElementById("li_username").value;
     data["password"] = document.getElementById("li_password").value;
+    data["remember_me"] = document.getElementById("li_remember_me").checked;
 
     return data;
   }

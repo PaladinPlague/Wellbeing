@@ -12,6 +12,7 @@ class Model {
     this.lastPostDate = null;
     this.initialFill = true;
     this.gotAllPosts = false;
+    this.rememberMe = false;
     this.newestPostsInterval = null;
   }
 
@@ -75,6 +76,8 @@ class Model {
     let formData = new FormData();
     formData.append("username", data.username);
     formData.append("password", data.password);
+
+    this.rememberMe = data.remember_me;
 
     this.doAJAXPOST("login.php", formData, this.loginAJAXHandler);
   }
@@ -152,7 +155,6 @@ class Model {
 
   login(id) {
     this.loggedInId = id;
-    localStorage.setItem("logged_in_id",id);
   }
 
   logout() {
@@ -166,6 +168,7 @@ class Model {
     this.getPostInProgress = false;
     this.initialFill = true;
     this.gotAllPosts = false;
+    this.rememberMe = false;
     clearInterval(this.newestPostsInterval);
   }
 
