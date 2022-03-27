@@ -15,7 +15,7 @@ $commenterId = safePOST($conn, "commenter_id");
 $text = safePOST($conn, "text");
 $anonymous = safePOST($conn, "anon");
 
-$allValid = (strlen($text) < 2000);
+$allValid = (strlen($text) < 1000);
 
 if($allValid) {
   $sql = "INSERT INTO comments(post_id, commenter_id, text, anonymous, timestamp) VALUES('$postId', '$commenterId', '$text', '$anonymous',CURRENT_TIMESTAMP);";
