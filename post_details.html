@@ -19,12 +19,10 @@
   regex = new RegExp("[?&]" + "post_id" + "=([^&#]*)"),
   match = regex.exec(url),
   post_id = match ? match[1] : "",
-  commentsArray;
 
   parse = function(data) { return JSON.parse(data.responseText) };
 
   document.getElementById("post_image").innerHTML = "<img onerror='this.style.display=\"none\"' src='fetch_img.php?id=" + post_id + "'><br>";
-  onerror="this.style.display='none'"
 
   http = new XMLHttpRequest();
   http.open("GET", "get_post.php?id=" + post_id);
