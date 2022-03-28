@@ -18,7 +18,7 @@ $anonymous = safePOST($conn, "anon");
 $allValid = (strlen($text) < 1000);
 
 if($allValid) {
-  $sql = "INSERT INTO comments(post_id, commenter_id, text, anonymous, timestamp) VALUES('$postId', '$commenterId', '$text', '$anonymous',CURRENT_TIMESTAMP);";
+  $sql = "INSERT INTO comments(post_id, commenter_id, text, anonymous, timestamp) VALUES('$postId', '$commenterId', '$text', $anonymous,CURRENT_TIMESTAMP);";
 
   $result = execute_query($conn, $sql);
 
