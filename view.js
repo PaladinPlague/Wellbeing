@@ -208,8 +208,9 @@ class View {
     document.getElementById("post_details_display").innerHTML = "<div class='displayed_post_details' id='pd_" + id + "'>" + content + "</div>";
   }
 
-  //TODO
   prependComment(content) {
+    let cc = document.getElementById("comments_container");
 
+    cc.innerHTML = content + cc.innerHTML;
   }
 }

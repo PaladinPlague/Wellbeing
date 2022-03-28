@@ -349,6 +349,61 @@ function tryAutomaticLogin() {
   }
 }
 
+function pd_browseLookup(id) {
+  view.clearPostDisplay();
+  view.switchVisible("bp_content", "pd_content");
+  model.getRequestedPost(id);
+}
+
+function pd_showResult(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  let currentPostObj = {post_id:undefined, text:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined, comments:undefined};
+
+  currentPostObj = JSON.parse(json_response);
+
+  if(currentPostObj.comments.length) {
+    model.newestCommentTimestamp = currentPostObj.comments[0].timestamp;
+  } else {
+    model.newestCommentTimestamp = currentPostObj.timestamp; //if there are no comments just use the post timestamp to check for new comments
+  }
+
+  model.currentPostDetailsId = currentPostObj.post_id;
+  clearInterval(model.newestCommentsInterval);
+  model.newestCommentsInterval = setInterval(()=>{model.updateComments()}, 10000);
+
+
+  view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
+}
+
+function pd_showNewComments(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  if(!json_response) {
+    return;
+  }
+
+  let allComments = JSON.parse(json_response);
+
+  if(allComments[0].post_id !== model.currentPostDetailsId) {
+    return;
+  }
+
+  let currentPostObj = {text:undefined, timestamp:undefined, username:undefined};
+  for(let i=0; i<allComments.length; i++) {
+    currentPostObj = allComments[i];
+
+    view.prependComment(model.constructCommentContent(currentPostObj));
+  }
+
+  model.newestCommentTimestamp = currentPostObj.timestamp; //the last post fetched
+  console.log(model.newestCommentTimestamp);
+}
+
 function allHandlers() {
   model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
   model.setCreateAccountAJAXHandler(ca_showResult)
@@ -357,6 +412,8 @@ function allHandlers() {
   model.setGetPostsAJAXHandler(bp_showResult);
   model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
   model.setGetNewestPostsAJAXHandler(bp_showNewest);
+  model.setGetRequestedPostAJAXHandler(pd_showResult);
+  model.setUpdateCommentsAJAXHandler(pd_showNewComments)
 
   view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
   view.setUpHandler("ca_form", "submit", ca_formSubmission);
@@ -371,6 +428,8 @@ function allHandlers() {
   view.setUpHandler("li_show_password", "click", () => {view.li_showPasswordToggle()});
 
   view.setUpHandler("scrollingElement", "scroll", () =>{clearNewPostMessage(); infiniteScrollLookup();});
+
+  view.setUpHandler("newPopup", "click", ()=>{view.scrollTop()});
 
   // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
   view.setUpHandler("temp_acc", "click", (ev) => {ev.preventDefault(); view.switchVisible("li_content", "ca_content")});
@@ -391,28 +450,7 @@ model.getLastPostDate();
 tryAutomaticLogin();
 
 
-function pd_browseLookup(id) {
-  view.clearPostDisplay();
-  view.switchVisible("bp_content", "pd_content");
-  model.getRequestedPost(id);
-}
-
-function pd_showResult(json_response) {
-  let currentPostObj = {post_id:undefined, text:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined, comments:undefined};
-
-  currentPostObj = JSON.parse(json_response)
 
 
-  view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
-}
 
-//TODO
-function pd_showNewComments(json_response) {
-  //display new comments - prepend using view method view.prependComment
-  //use model.constructCommentContent
-}
 
-model.setGetRequestedPostAJAXHandler(pd_showResult);
-model.setUpdateCommentsAJAXHandler(pd_showNewComments)
-
-view.setUpHandler("newPopup", "click", ()=>{view.scrollTop()});

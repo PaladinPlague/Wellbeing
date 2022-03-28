@@ -209,7 +209,7 @@ class Model {
 
   //TODO
   updateComments() {
-
+    this.doAJAXGET("update_comments.php", "?id="+this.currentPostDetailsId +"&latest="+encodeURIComponent(this.newestCommentTimestamp), this.updateCommentsAJAXHandler);
   }
 
   //TODO
@@ -233,7 +233,7 @@ class Model {
     currentPostContent += "Comments:<br/><div id='comments_container'>";
 
     for(let i=0; i < currentPostObj.comments.length; i++) {
-      currentPostContent += this.constructCommentContent(currentPostObj.comments[i]) + "<br/>";
+      currentPostContent += this.constructCommentContent(currentPostObj.comments[i]);
     }
 
     currentPostContent += "</div>";
@@ -243,7 +243,7 @@ class Model {
   }
 
   constructCommentContent(currentCommentObj) {
-    let currentCommentContent = currentCommentObj.username + " | " + currentCommentObj.text + " | " + currentCommentObj.timestamp;
+    let currentCommentContent = "<div class='comment'>" + currentCommentObj.username + " | " + currentCommentObj.text + " | " + currentCommentObj.timestamp + "</div>";
 
     return currentCommentContent;
   }

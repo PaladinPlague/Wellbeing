@@ -5,7 +5,7 @@ $conn = createDBConnection();
 $requestedId = $_GET["id"];
 $latestTimestamp = $_GET["latest"];
 
-$sql = "SELECT comments.text, users.username, comments.timestamp, comments.anonymous FROM comments, users WHERE comments.commenter_id = users.user_id AND comments.post_id ='$requestedId' AND timestamp > '$latestTimestamp' ORDER BY timestamp ASC";
+$sql = "SELECT comments.post_id, comments.text, users.username, comments.timestamp, comments.anonymous FROM comments, users WHERE comments.commenter_id = users.user_id AND comments.post_id ='$requestedId' AND timestamp > '$latestTimestamp' ORDER BY timestamp ASC";
 
 
 $result = execute_query($conn, $sql);
