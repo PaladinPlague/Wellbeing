@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title id="post_title"></title>
+    <meta charset="UTF-8">
+    <title id="post_title"></title>
 </head>
 <body>
 <a href="home.html">Back to home</a><br/>
@@ -10,69 +10,84 @@
 <div id="post_body"></div>
 <div id="post_image"></div>
 <div id="comments">
-<p>Comments</p>
+    <p>Comments</p>
     <label for="comments_box" id="noText"></label><textarea name="comments" id="comments_box">
 Write a comment
 </textarea>
-  <input type="submit" id="comments_btn" value="Add Comment" onclick="addComment()">
+    <input type="submit" id="comments_btn" value="Add Comment" onclick="addComment()">
+    <label for="anon">Remain anonymous</label><input type="checkbox" id="anon" name="anon" value="Remain anonymous">
 </div>
 
 </body>
 
 <script>
-  var url = decodeURIComponent(window.location.href),
-  regex = new RegExp("[?&]" + "post_id" + "=([^&#]*)"),
-  match = regex.exec(url),
-  post_id = match ? match[1] : "",
+    var url = decodeURIComponent(window.location.href),
+        regex = new RegExp("[?&]" + "post_id" + "=([^&#]*)"),
+        match = regex.exec(url),
+        post_id = match ? match[1] : "",
 
-  parse = function(data) { return JSON.parse(data.responseText) };
+        parse = function(data) { return JSON.parse(data.responseText) };
 
-  document.getElementById("post_image").innerHTML = "<img onerror='this.style.display=\"none\"' src='fetch_img.php?id=" + post_id + "'><br>";
+    document.getElementById("post_image").innerHTML = "<img onerror='this.style.display=\"none\"' src='fetch_img.php?id=" + post_id + "'><br>";
 
-  http = new XMLHttpRequest();
-  http.open("GET", "get_post.php?id=" + post_id);
-  http.onreadystatechange = function() {
+    http = new XMLHttpRequest();
+    http.open("GET", "get_post.php?id=" + post_id);
+    http.onreadystatechange = function() {
 
-    if (http.readyState == 4 && http.status == 200) {
-      parsed_data = parse(http);
+        if (http.readyState == 4 && http.status == 200) {
+            parsed_data = parse(http);
 
-      if((parsed_data.username == "Anonymous"))
-        document.getElementById("post_title").textContent = "Anonymous Post";
-      else
-        document.getElementById("post_title").textContent = parsed_data.username + "'s Post";
+            if((parsed_data.username == "Anonymous"))
+                document.getElementById("post_title").textContent = "Anonymous Post";
+            else
+                document.getElementById("post_title").textContent = parsed_data.username + "'s Post";
 
-      document.getElementById("post_header").innerHTML = "<p>" + parsed_data.username + "    " + parsed_data.timestamp + "</p><p>" + parsed_data.title + "</p>";
-      document.getElementById("post_body").innerHTML = "<p>" + parsed_data.body + "</p>";
+            document.getElementById("post_header").innerHTML = "<p>" + parsed_data.username + "    " + parsed_data.timestamp + "</p><p>" + parsed_data.title + "</p>";
+            document.getElementById("post_body").innerHTML = "<p>" + parsed_data.body + "</p>";
 
 
-      for(let i=0; parsed_data.comments.length; i++)
-        document.getElementById("comments").innerHTML += "<p>" + parsed_data.comments[i].username + " | "
-                + parsed_data.comments[i].text + " | " + parsed_data.comments[i].timestamp + "</p>";
+            for(let i=0; parsed_data.comments.length; i++)
+                document.getElementById("comments").innerHTML += "<p>" + parsed_data.comments[i].username + " | "
+                    + parsed_data.comments[i].text + " | " + parsed_data.comments[i].timestamp + "</p>";
 
-      }
-  };
-  http.send();
+        }
+    };
+    http.send();
+</script>
+<script>
 
-function addComment() {
+    function addComment() {
 
-let comm = document.getElementById("comments_box").innerHTML;
-let commID = window.localStorage.getItem("logged_in_id");
-if (comm === "") {
-document.getElementById("noText").innerHTML = "Comment is empty.";
-return;
-}
-    if (commID === "") {
-        document.getElementById("noText").innerHTML = "Login to comment.";
-        return;
+        let comm = document.getElementById("comments_box").value;
+        let commID = window.localStorage.getItem("logged_in_id");
+        let anonymous;
+        if (document.getElementById("anon").checked === true) {
+            anonymous = 1;
+        } else {
+            anonymous = 0;
+        }
+
+        let params = "text=" + String(comm) + "&commenter_id=" + String(commID) + "&anon=" + anonymous + "&post_id=" + String(post_id);
+        if (comm === "") {
+            document.getElementById("noText").innerHTML = "Comment is empty.";
+            return;
+        }
+        if (commID === "") {
+            document.getElementById("noText").innerHTML = "Login to comment.";
+            return;
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'make_comment.php', true);
+
+//Send the proper header information along with the request
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function () { // Call a function when the state changes.
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+
+            }
+        }
+        xhr.send(params);
     }
-    let http = new XMLHttpRequest();
-    http.open("GET", "insertComment.php?comm=" + comm);
-http.onreadystatechange = function() {
-if (this.readyState == 4 && this.status == 200) {
-    document.getElementById("noText").innerHTML = "HERE";
-}
-};
-http.send();
-}
 </script>
 </html>
