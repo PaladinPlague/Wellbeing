@@ -116,11 +116,3 @@ if(isset($_GET["last"])) {
 
 $conn->close();
 
-
-
-
-
-
-
-
-
