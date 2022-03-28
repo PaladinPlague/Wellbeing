@@ -11,6 +11,10 @@
 <div id="post_image"></div>
 <div id="comments">
 <p>Comments</p>
+    <label for="comments_box" id="noText"></label><textarea name="comments" id="comments_box">
+Write a comment
+</textarea>
+  <input type="submit" id="comments_btn" value="Add Comment" onclick="addComment()">
 </div>
 
 </body>
@@ -49,6 +53,26 @@
   };
   http.send();
 
+function addComment() {
 
+let comm = document.getElementById("comments_box").innerHTML;
+let commID = window.localStorage.getItem("logged_in_id");
+if (comm === "") {
+document.getElementById("noText").innerHTML = "Comment is empty.";
+return;
+}
+    if (commID === "") {
+        document.getElementById("noText").innerHTML = "Login to comment.";
+        return;
+    }
+    let http = new XMLHttpRequest();
+    http.open("GET", "insertComment.php?comm=" + comm);
+http.onreadystatechange = function() {
+if (this.readyState == 4 && this.status == 200) {
+    document.getElementById("noText").innerHTML = "HERE";
+}
+};
+http.send();
+}
 </script>
 </html>
