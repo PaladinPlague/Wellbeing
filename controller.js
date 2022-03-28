@@ -372,7 +372,7 @@ function pd_showResult(json_response) {
 
   model.currentPostDetailsId = currentPostObj.post_id;
   clearInterval(model.newestCommentsInterval);
-  model.newestCommentsInterval = setInterval(()=>{model.updateComments()}, 10000);
+  model.newestCommentsInterval = setInterval(()=>{model.updateComments(currentPostObj.post_id)}, 10000);
 
 
   view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
@@ -400,8 +400,7 @@ function pd_showNewComments(json_response) {
     view.prependComment(model.constructCommentContent(currentPostObj));
   }
 
-  model.newestCommentTimestamp = currentPostObj.timestamp; //the last post fetched
-  console.log(model.newestCommentTimestamp);
+  model.newestCommentTimestamp = currentPostObj.timestamp; //the last comment fetched
 }
 
 function allHandlers() {

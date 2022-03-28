@@ -148,10 +148,8 @@ class View {
     let newPostMessageElement = document.getElementById("newPopup");
 
     if(displayIt) {
-      this.newPostMessageDisplayed = true;
       newPostMessageElement.style.display = "block";
     } else {
-      this.newPostMessageDisplayed = false;
       newPostMessageElement.style.display = "none";
     }
   }

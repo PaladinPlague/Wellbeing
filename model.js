@@ -207,12 +207,10 @@ class Model {
     this.getRequestedPostAJAXHandler = handler;
   }
 
-  //TODO
-  updateComments() {
-    this.doAJAXGET("update_comments.php", "?id="+this.currentPostDetailsId +"&latest="+encodeURIComponent(this.newestCommentTimestamp), this.updateCommentsAJAXHandler);
+  updateComments(id) {
+    this.doAJAXGET("update_comments.php", "?id="+id +"&latest="+encodeURIComponent(this.newestCommentTimestamp), this.updateCommentsAJAXHandler);
   }
 
-  //TODO
   setUpdateCommentsAJAXHandler(handler) {
     this.updateCommentsAJAXHandler = handler;
   }
