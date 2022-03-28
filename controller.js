@@ -377,7 +377,7 @@ function allHandlers() {
   view.setUpHandler("temp_golog", "click", (ev) => {ev.preventDefault(); view.switchVisible("ca_content", "li_content")});
   view.setUpHandler("temp_logout1", "click", (ev) => {ev.preventDefault(); model.logout(); view.switchVisible("browse_container", "login_container")});
   view.setUpHandler("temp_post1", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_details", "click", (ev) => {ev.preventDefault(); view.switchVisible("bp_content", "pd_content")});
+  // view.setUpHandler("temp_details", "click", (ev) => {ev.preventDefault(); view.switchVisible("bp_content", "pd_content")});
   view.setUpHandler("temp_totop", "click", (ev) => {ev.preventDefault(); view.scrollTop();});
   view.setUpHandler("temp_logout2", "click", (ev) => {ev.preventDefault(); model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
   view.setUpHandler("temp_post2", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
@@ -406,12 +406,13 @@ function pd_showResult(json_response) {
   view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
 }
 
-function pd_showNewComment(json_response) {
+//TODO
+function pd_showNewComments(json_response) {
   //display new comments - prepend using view method view.prependComment
   //use model.constructCommentContent
 }
 
 model.setGetRequestedPostAJAXHandler(pd_showResult);
-model.setUpdateCommentsAJAXHandler(pd_showNewComment)
+model.setUpdateCommentsAJAXHandler(pd_showNewComments)
 
 view.setUpHandler("newPopup", "click", ()=>{view.scrollTop()});

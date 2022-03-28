@@ -15,6 +15,7 @@ class Model {
     this.rememberMe = false;
     this.newestPostsInterval = null;
     this.currentPostDetailsId = 0;
+    this.newestCommentTimestamp =  "";
     this.newestCommentsInterval = null
   }
 
@@ -172,6 +173,7 @@ class Model {
     this.gotAllPosts = false;
     this.rememberMe = false;
     this.currentPostDetailsId = 0;
+    this.newestCommentTimestamp =  "";
     clearInterval(this.newestPostsInterval);
     clearInterval(this.newestCommentsInterval);
   }
@@ -205,10 +207,12 @@ class Model {
     this.getRequestedPostAJAXHandler = handler;
   }
 
+  //TODO
   updateComments() {
 
   }
 
+  //TODO
   setUpdateCommentsAJAXHandler(handler) {
     this.updateCommentsAJAXHandler = handler;
   }
@@ -226,20 +230,20 @@ class Model {
 
     currentPostContent += currentPostObj.body +"</p>";
 
-    currentPostContent += "<p>Comments: <br/>";
+    currentPostContent += "Comments:<br/><div id='comments_container'>";
 
     for(let i=0; i < currentPostObj.comments.length; i++) {
       currentPostContent += this.constructCommentContent(currentPostObj.comments[i]) + "<br/>";
     }
 
-    currentPostContent += "</p>";
+    currentPostContent += "</div>";
 
 
     return currentPostContent;
   }
 
   constructCommentContent(currentCommentObj) {
-    let currentCommentContent = "<p>" + currentCommentObj.username + " | " + currentCommentObj.text + " | " + currentCommentObj.timestamp + "</p>";
+    let currentCommentContent = currentCommentObj.username + " | " + currentCommentObj.text + " | " + currentCommentObj.timestamp;
 
     return currentCommentContent;
   }
