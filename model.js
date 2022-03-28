@@ -17,6 +17,7 @@ class Model {
     this.currentPostDetailsId = 0;
     this.newestCommentTimestamp =  "";
     this.newestCommentsInterval = null
+    this.commentSubmitUpdateInProgress = 0;
   }
 
   doAJAXPOST(url, formData, handler){
@@ -174,6 +175,7 @@ class Model {
     this.rememberMe = false;
     this.currentPostDetailsId = 0;
     this.newestCommentTimestamp =  "";
+    this.commentSubmitUpdateInProgress = 0;
     clearInterval(this.newestPostsInterval);
     clearInterval(this.newestCommentsInterval);
   }
@@ -208,6 +210,8 @@ class Model {
   }
 
   updateComments(id) {
+    console.log("sent");
+    model.commentSubmitUpdateInProgress += 1;
     this.doAJAXGET("update_comments.php", "?id="+id +"&latest="+encodeURIComponent(this.newestCommentTimestamp), this.updateCommentsAJAXHandler);
   }
 
@@ -228,13 +232,25 @@ class Model {
 
     currentPostContent += currentPostObj.body +"</p>";
 
-    currentPostContent += "Comments:<br/><div id='comments_container'>";
+    currentPostContent += "<div id='pd_comments_section'>Comments:"
+
+    let commentForm = "<form id='pd_comment_form'>";
+    commentForm += "<textarea id='pd_text' name='pd_text'></textarea>";
+    commentForm += "<input type='checkbox' id='pd_anon' name='pd_anon'>"
+    commentForm += "<label for='pd_anon'>Anonymous?</label><br/>";
+    commentForm += "<input type='submit' id='pd_submit' value='Comment' class = 'submit_button' disabled>";
+    commentForm += "</form>";
+
+    currentPostContent += commentForm;
+
+    currentPostContent += "<div id='comments_container'>";
+
 
     for(let i=0; i < currentPostObj.comments.length; i++) {
       currentPostContent += this.constructCommentContent(currentPostObj.comments[i]);
     }
 
-    currentPostContent += "</div>";
+    currentPostContent += "</div></div>";
 
 
     return currentPostContent;
@@ -246,4 +262,17 @@ class Model {
     return currentCommentContent;
   }
 
+  makeCommentFormSubmission(data) {
+    let formData = new FormData();
+    formData.append("post_id", this.currentPostDetailsId);
+    formData.append("commenter_id", this.loggedInId);
+    formData.append("text", data.text);
+    formData.append("anon", data.anon);
+
+    this.doAJAXPOST("make_comment.php", formData, this.makeCommentAJAXHandler);
+  }
+
+  setMakeCommentAJAXHandler(handler) {
+    this.makeCommentAJAXHandler = handler;
+  }
 }

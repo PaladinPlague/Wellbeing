@@ -372,10 +372,13 @@ function pd_showResult(json_response) {
 
   model.currentPostDetailsId = currentPostObj.post_id;
   clearInterval(model.newestCommentsInterval);
-  model.newestCommentsInterval = setInterval(()=>{model.updateComments(currentPostObj.post_id)}, 10000);
+  model.newestCommentsInterval = setInterval(()=>{console.log("gone");
 
+    setTimeout(()=>{model.updateComments(currentPostObj.post_id)}, 2000)}, 10000);
 
   view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
+  view.setUpHandler("pd_text", "input", ()=>{view.checkEnableCommentPostButton()});
+  view.setUpHandler("pd_comment_form", "submit", pd_commentFormSubmission);
 }
 
 function pd_showNewComments(json_response) {
@@ -386,21 +389,44 @@ function pd_showNewComments(json_response) {
   if(!json_response) {
     return;
   }
+  console.log("received");
+  model.commentSubmitUpdateInProgress -= 1;
 
-  let allComments = JSON.parse(json_response);
+  if(model.commentSubmitUpdateInProgress === 0) {
+    let allComments = JSON.parse(json_response);
 
-  if(allComments[0].post_id !== model.currentPostDetailsId) {
-    return;
+    if(allComments[0].post_id !== model.currentPostDetailsId) {
+      return;
+    }
+
+    let currentPostObj = {text:undefined, timestamp:undefined, username:undefined};
+    for(let i=0; i<allComments.length; i++) {
+      currentPostObj = allComments[i];
+
+      view.prependComment(model.constructCommentContent(currentPostObj));
+    }
+
+    model.newestCommentTimestamp = currentPostObj.timestamp; //the last comment fetched
   }
+}
 
-  let currentPostObj = {text:undefined, timestamp:undefined, username:undefined};
-  for(let i=0; i<allComments.length; i++) {
-    currentPostObj = allComments[i];
+function pd_commentFormSubmission(evt) {
+  evt.preventDefault();
 
-    view.prependComment(model.constructCommentContent(currentPostObj));
+  let data = view.pd_getCommentData();
+
+  model.makeCommentFormSubmission(data);
+  view.pd_disabled(true);
+}
+
+function pd_commentShowResult(text) {
+  view.pd_disabled(false);
+
+  if(text === "1") {
+    view.clearCommentForm();
+    view.checkEnableCommentPostButton();
+    model.updateComments(model.currentPostDetailsId);
   }
-
-  model.newestCommentTimestamp = currentPostObj.timestamp; //the last comment fetched
 }
 
 function allHandlers() {
@@ -412,7 +438,8 @@ function allHandlers() {
   model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
   model.setGetNewestPostsAJAXHandler(bp_showNewest);
   model.setGetRequestedPostAJAXHandler(pd_showResult);
-  model.setUpdateCommentsAJAXHandler(pd_showNewComments)
+  model.setUpdateCommentsAJAXHandler(pd_showNewComments);
+  model.setMakeCommentAJAXHandler(pd_commentShowResult);
 
   view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
   view.setUpHandler("ca_form", "submit", ca_formSubmission);
@@ -447,9 +474,4 @@ function allHandlers() {
 allHandlers();
 model.getLastPostDate();
 tryAutomaticLogin();
-
-
-
-
-
 

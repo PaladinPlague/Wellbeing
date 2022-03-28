@@ -211,4 +211,31 @@ class View {
 
     cc.innerHTML = content + cc.innerHTML;
   }
+
+  pd_getCommentData() {
+    let data = {};
+    data["text"] = document.getElementById("pd_text").value;
+    data["anon"] = document.getElementById("pd_anon").checked ? "1" : "0";
+
+    return data;
+  }
+
+  checkEnableCommentPostButton() {
+    if(document.getElementById("pd_text").value && document.getElementById("pd_text").value.length < 1000) {
+      document.getElementById("pd_submit").disabled = false;
+    } else {
+      document.getElementById("pd_submit").disabled = true;
+    }
+  }
+
+  pd_disabled(bool) {
+    document.getElementById("pd_text").disabled = bool;
+    document.getElementById("pd_anon").disabled = bool;
+    document.getElementById("pd_submit").disabled = bool;
+  }
+
+  clearCommentForm() {
+    document.getElementById("pd_comment_form").reset();
+  }
+
 }

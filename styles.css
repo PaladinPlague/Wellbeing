@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 h1,.displayed_post > p, .displayed_post_details > p {
   margin:0;
 }
@@ -42,7 +46,7 @@ a {
   background-color: rgb(0, 6, 63);
   font-size:6vmin;
   box-sizing: border-box;
-  /*border-bottom: 1vmin solid rgb(33, 43, 140);*/
+  border-bottom: 1vmin solid rgb(33, 43, 140);
   overflow: hidden;
 }
 
@@ -68,17 +72,13 @@ a {
 
 #scrollingElement, #post_details_display {
   box-sizing:border-box;
-  height:90%;
+  height:86%;
   overflow-y: scroll;
   padding:2%;
   background-color: rgb(85, 108, 201);
   border: 1vmin solid #2f3656;
-
+  margin:2vh;
 }
-
-/*#scrollingElement {*/
-/*  padding-top:0;*/
-/*}*/
 
 #status_message{
   color: white;
@@ -114,13 +114,18 @@ img {
   border:1vmin solid #40A0ff;
 }
 
-input[type=text], input[type=password]{
+input[type=text], input[type=password], textarea{
   font-size:90%;
   padding:2%;
   width: 65%;
   border-radius: 4vmin;
   border: 1vmin solid #7e88b4;
   margin-bottom: 2vmin;
+}
+
+textarea {
+  height:15vh;
+  resize:none;
 }
 
 .submit_button {
@@ -141,4 +146,37 @@ input[type=text], input[type=password]{
 
 #li_output, #ca_output, #mp_output {
   margin-left:3%;
+}
+
+#pd_comment_form {
+  background-color: rgb(36, 46, 87);
+  border: 1vmin solid #4d5686;
+  padding: 2%;
+}
+
+#pd_comment_form > textarea {
+  width:100%;
+}
+
+#pd_comment_form {
+  font-size:70%;
+}
+
+#pd_comment_form > input[type=checkbox] {
+  width:4vmin;
+  height:4vmin;
+  margin-right:1vmin;
+}
+
+.submit_button:disabled {
+  color:gray;
+}
+
+#pd_submit {
+  margin-top: 2vmin;
+}
+
+#pd_comments_section {
+  border-top: 1vmin solid rgb(85, 108, 201);
+  padding-top:4vmin;
 }
