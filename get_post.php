@@ -79,13 +79,20 @@ if(isset($_GET["last"])) {
   $row = $result->fetch_assoc();
 
 
-  $sql2 = "SELECT comments.text, users.username, comments.timestamp FROM comments, users WHERE comments.commenter_id = users.user_id AND comments.post_id ='$requestedId' ORDER BY timestamp DESC";
+  $sql2 = "SELECT comments.post_id, comments.text, users.username, comments.timestamp, comments.anonymous FROM comments, users WHERE comments.commenter_id = users.user_id AND comments.post_id ='$requestedId' ORDER BY timestamp DESC";
 
   $result2 = execute_query($conn, $sql2);
 
   $commentsArray = [];
 
   while($commentRow = $result2->fetch_assoc()) {
+    $commentAnonymous = $commentRow["anonymous"];
+    unset($commentRow["anonymous"]);
+
+    if($commentAnonymous) {
+      $commentRow["username"] = "Anonymous";
+    }
+
     $commentsArray[] = $commentRow;
   }
 

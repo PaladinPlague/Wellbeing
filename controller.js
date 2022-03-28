@@ -133,8 +133,10 @@ function mp_showResult(text) {
 
   if(text !== "0") {
     view.showOutput("mp_","Success!");
-    //TODO lookup details for the post that was just posted, id = text
-    console.log(text);
+
+    view.clearPostDisplay();
+    model.getRequestedPost(text);
+
     setTimeout(function() {view.switchVisible("makepost_container", "browse_container"); view.switchVisible("bp_content", "pd_content"); view.mp_disabled(false); view.clearForm("mp_");}, 1000);
   } else {
     view.showOutput("mp_","Failed.");
@@ -270,8 +272,7 @@ function bp_showResult(json_response) {
       model.mostRecentTimestamp = currentPostObj.timestamp;
     }
 
-    //TODO replace with post details lookup of given id
-    let onclick = "onclick=\"console.log(" + currentPostObj.post_id + ");\"";
+    let onclick = "onclick=\"pd_browseLookup(" + currentPostObj.post_id + ");\"";
     view.appendPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
   }
 
@@ -305,8 +306,7 @@ function bp_showNewest(json_response) {
   for(let i=0; i<allPosts.length; i++) {
     currentPostObj = allPosts[i];
 
-    //TODO replace with post details lookup of given id
-    let onclick = "onclick=\"console.log(" + currentPostObj.post_id + ");\"";
+    let onclick = "onclick=\"pd_browseLookup(" + currentPostObj.post_id + ");\"";
     view.prependPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
   }
 
@@ -391,13 +391,19 @@ model.getLastPostDate();
 tryAutomaticLogin();
 
 
-function pd_lookup() {
-
+function pd_browseLookup(id) {
+  view.clearPostDisplay();
+  view.switchVisible("bp_content", "pd_content");
+  model.getRequestedPost(id);
 }
 
 function pd_showResult(json_response) {
-  //model.constructPostDetailsContent
-  //view.showPostDetails
+  let currentPostObj = {post_id:undefined, text:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined, comments:undefined};
+
+  currentPostObj = JSON.parse(json_response)
+
+
+  view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
 }
 
 function pd_showNewComment(json_response) {

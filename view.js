@@ -127,7 +127,7 @@ class View {
   }
 
   appendPost(id, content, onclick) {
-    document.getElementById("scrollingElement").innerHTML += "<div class='displayed_post' id='" + id + "' " + onclick + ">" + content + "</div>";
+    document.getElementById("scrollingElement").innerHTML += "<div class='displayed_post' id='bp_" + id + "' " + onclick + ">" + content + "</div>";
   }
 
   isNotScroll() {
@@ -158,7 +158,7 @@ class View {
 
   prependPost(id, content, onclick) {
     let se = document.getElementById("scrollingElement");
-    se.innerHTML = "<div class='displayed_post' id='" + id + "' " + onclick + ">" + content + "</div>" + se.innerHTML;
+    se.innerHTML = "<div class='displayed_post' id='bp_" + id + "' " + onclick + ">" + content + "</div>" + se.innerHTML;
   }
 
   distanceFromBottom() {
@@ -200,8 +200,12 @@ class View {
     document.getElementById("status_message").innerHTML = "No more posts!";
   }
 
-  showPostDetails(content) {
+  clearPostDisplay() {
+    document.getElementById("post_details_display").innerHTML = "";
+  }
 
+  showPostDetails(id, content) {
+    document.getElementById("post_details_display").innerHTML = "<div class='displayed_post_details' id='pd_" + id + "'>" + content + "</div>";
   }
 
   prependComment(content) {

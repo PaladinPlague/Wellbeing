@@ -198,8 +198,7 @@ class Model {
   }
 
   getRequestedPost(id) {
-    //AJAX call to get_post.php?id=
-    //using this.getRequestedPostAJAXHandler
+    this.doAJAXGET("get_post.php", "?id="+id, this.getRequestedPostAJAXHandler);
   }
 
   setGetRequestedPostAJAXHandler(handler) {
@@ -214,12 +213,35 @@ class Model {
     this.updateCommentsAJAXHandler = handler;
   }
 
-  constructPostDetailsContent() {
+  constructPostDetailsContent(currentPostObj) {
+    let currentPostContent = "<p>";
 
+    currentPostContent += currentPostObj.title + "<br/>";
+    currentPostContent += "By: " + currentPostObj.username + "<br/>";
+    currentPostContent += "Posted: " + currentPostObj.timestamp +"<br/>";
+
+    if(currentPostObj.hasImg) {
+      currentPostContent += "<img alt='" + currentPostObj.title + "'  src='fetch_img.php?id=" + currentPostObj.post_id + "'>";
+    }
+
+    currentPostContent += currentPostObj.body +"</p>";
+
+    currentPostContent += "<p>Comments: <br/>";
+
+    for(let i=0; i < currentPostObj.comments.length; i++) {
+      currentPostContent += this.constructCommentContent(currentPostObj.comments[i]) + "<br/>";
+    }
+
+    currentPostContent += "</p>";
+
+
+    return currentPostContent;
   }
 
-  constructCommentContent() {
+  constructCommentContent(currentCommentObj) {
+    let currentCommentContent = "<p>" + currentCommentObj.username + " | " + currentCommentObj.text + " | " + currentCommentObj.timestamp + "</p>";
 
+    return currentCommentContent;
   }
 
 }
