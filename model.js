@@ -14,6 +14,8 @@ class Model {
     this.gotAllPosts = false;
     this.rememberMe = false;
     this.newestPostsInterval = null;
+    this.currentPostDetailsId = 0;
+    this.newestCommentsInterval = null
   }
 
   doAJAXPOST(url, formData, handler){
@@ -169,7 +171,9 @@ class Model {
     this.initialFill = true;
     this.gotAllPosts = false;
     this.rememberMe = false;
+    this.currentPostDetailsId = 0;
     clearInterval(this.newestPostsInterval);
+    clearInterval(this.newestCommentsInterval);
   }
 
   constructBrowsePostContent(currentPostObj) {
@@ -192,4 +196,30 @@ class Model {
   getNewestPosts() {
     this.doAJAXGET("get_post.php", "?newest=" + encodeURIComponent(this.mostRecentTimestamp), this.getNewestPostsAJAXHandler);
   }
+
+  getRequestedPost(id) {
+    //AJAX call to get_post.php?id=
+    //using this.getRequestedPostAJAXHandler
+  }
+
+  setGetRequestedPostAJAXHandler(handler) {
+    this.getRequestedPostAJAXHandler = handler;
+  }
+
+  updateComments() {
+
+  }
+
+  setUpdateCommentsAJAXHandler(handler) {
+    this.updateCommentsAJAXHandler = handler;
+  }
+
+  constructPostDetailsContent() {
+
+  }
+
+  constructCommentContent() {
+
+  }
+
 }

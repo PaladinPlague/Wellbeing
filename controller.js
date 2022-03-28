@@ -131,9 +131,10 @@ function mp_showResult(text) {
     return;
   }
 
-  if(text === "1") {
+  if(text !== "0") {
     view.showOutput("mp_","Success!");
-    //TODO lookup details for the post that was just posted
+    //TODO lookup details for the post that was just posted, id = text
+    console.log(text);
     setTimeout(function() {view.switchVisible("makepost_container", "browse_container"); view.switchVisible("bp_content", "pd_content"); view.mp_disabled(false); view.clearForm("mp_");}, 1000);
   } else {
     view.showOutput("mp_","Failed.");
@@ -269,7 +270,9 @@ function bp_showResult(json_response) {
       model.mostRecentTimestamp = currentPostObj.timestamp;
     }
 
-    view.appendPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj));
+    //TODO replace with post details lookup of given id
+    let onclick = "onclick=\"console.log(" + currentPostObj.post_id + ");\"";
+    view.appendPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
   }
 
   view.showLoadingMessage(true);
@@ -301,7 +304,10 @@ function bp_showNewest(json_response) {
 
   for(let i=0; i<allPosts.length; i++) {
     currentPostObj = allPosts[i];
-    view.prependPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj));
+
+    //TODO replace with post details lookup of given id
+    let onclick = "onclick=\"console.log(" + currentPostObj.post_id + ");\"";
+    view.prependPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
   }
 
   model.mostRecentTimestamp = currentPostObj.timestamp; //the last post fetched
@@ -383,3 +389,23 @@ function allHandlers() {
 allHandlers();
 model.getLastPostDate();
 tryAutomaticLogin();
+
+
+function pd_lookup() {
+
+}
+
+function pd_showResult(json_response) {
+  //model.constructPostDetailsContent
+  //view.showPostDetails
+}
+
+function pd_showNewComment(json_response) {
+  //display new comments - prepend using view method view.prependComment
+  //use model.constructCommentContent
+}
+
+model.setGetRequestedPostAJAXHandler(pd_showResult);
+model.setUpdateCommentsAJAXHandler(pd_showNewComment)
+
+view.setUpHandler("newPopup", "click", ()=>{view.scrollTop()});

@@ -126,8 +126,8 @@ class View {
     document.getElementById("bp_content").style.display = "block";
   }
 
-  appendPost(id, content) {
-    document.getElementById("scrollingElement").innerHTML += "<div class='displayed_post' id='" + id + "'>" + content + "</div>";
+  appendPost(id, content, onclick) {
+    document.getElementById("scrollingElement").innerHTML += "<div class='displayed_post' id='" + id + "' " + onclick + ">" + content + "</div>";
   }
 
   isNotScroll() {
@@ -156,9 +156,9 @@ class View {
     }
   }
 
-  prependPost(id, content) {
+  prependPost(id, content, onclick) {
     let se = document.getElementById("scrollingElement");
-    se.innerHTML = "<div class='displayed_post' id='" + id + "'>" + content + "</div>" + se.innerHTML;
+    se.innerHTML = "<div class='displayed_post' id='" + id + "' " + onclick + ">" + content + "</div>" + se.innerHTML;
   }
 
   distanceFromBottom() {
@@ -198,5 +198,13 @@ class View {
 
   showNoMorePosts() {
     document.getElementById("status_message").innerHTML = "No more posts!";
+  }
+
+  showPostDetails(content) {
+
+  }
+
+  prependComment(content) {
+
   }
 }

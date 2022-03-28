@@ -33,7 +33,11 @@ if($allValid) {
   $result = execute_query($conn, $sql);
 
   if($result) {
-    echo 1;
+    $sql2 = "SELECT post_id FROM posts WHERE user_id='$userId' ORDER BY TIMESTAMP DESC LIMIT 1";
+    $result2 = execute_query($conn, $sql2);
+    $row2 = $result2->fetch_assoc();
+
+    echo $row2["post_id"];
   } else {
     echo 0;
   }
