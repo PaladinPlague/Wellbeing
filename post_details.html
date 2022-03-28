@@ -67,7 +67,7 @@ Write a comment
             anonymous = 0;
         }
 
-        let params = "text=" + String(comm) + "&commenter_id=" + String(commID) + "&anon=" + anonymous + "&post_id=200"
+        let params = "text=" + String(comm) + "&commenter_id=" + String(commID) + "&anon=" + anonymous + "&post_id=" + String(post_id);
         if (comm === "") {
             document.getElementById("noText").innerHTML = "Comment is empty.";
             return;
@@ -84,7 +84,7 @@ Write a comment
 
         xhr.onreadystatechange = function () { // Call a function when the state changes.
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                document.getElementById("noText").innerHTML = "HERE";
+
             }
         }
         xhr.send(params);
