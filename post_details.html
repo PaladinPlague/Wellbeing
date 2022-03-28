@@ -15,6 +15,7 @@
 Write a comment
 </textarea>
     <input type="submit" id="comments_btn" value="Add Comment" onclick="addComment()">
+    <label for="anon">Remain anonymous</label><input type="checkbox" id="anon" name="anon" value="Remain anonymous">
 </div>
 
 </body>
@@ -59,7 +60,14 @@ Write a comment
 
         let comm = document.getElementById("comments_box").value;
         let commID = window.localStorage.getItem("logged_in_id");
-        let params = "text=" + String(comm) + "&commenter_id=" + String(commID) + "&anon=1" + "&post_id=200"
+        let anonymous;
+        if (document.getElementById("anon").checked === true) {
+            anonymous = 1;
+        } else {
+            anonymous = 0;
+        }
+
+        let params = "text=" + String(comm) + "&commenter_id=" + String(commID) + "&anon=" + anonymous + "&post_id=200"
         if (comm === "") {
             document.getElementById("noText").innerHTML = "Comment is empty.";
             return;
