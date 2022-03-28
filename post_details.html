@@ -59,7 +59,8 @@ Write a comment
     function addComment() {
 
         let comm = document.getElementById("comments_box").value;
-        let commID = window.localStorage.getItem("logged_in_id");
+        let commID = model.loggedInId;
+
         let anonymous;
         if (document.getElementById("anon").checked === true) {
             anonymous = 1;
@@ -67,7 +68,7 @@ Write a comment
             anonymous = 0;
         }
 
-        let params = "text=" + String(comm) + "&commenter_id=" + String(commID) + "&anon=" + anonymous + "&post_id=" + String(post_id);
+        let comment_data = "text=" + String(comm) + "&commenter_id=" + String(commID) + "&anon=" + anonymous + "&post_id=" + String(post_id)
         if (comm === "") {
             document.getElementById("noText").innerHTML = "Comment is empty.";
             return;
@@ -79,15 +80,14 @@ Write a comment
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'make_comment.php', true);
 
-//Send the proper header information along with the request
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
         xhr.onreadystatechange = function () { // Call a function when the state changes.
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-
+                document.getElementById("noText").innerHTML = "HERE";
             }
         }
-        xhr.send(params);
+        xhr.send(comment_data);
     }
 </script>
 </html>
