@@ -261,7 +261,7 @@ class Model {
   }
 
   constructCommentContent(currentCommentObj) {
-    let currentCommentContent = "<div class='comment'>" + currentCommentObj.username + " | " + currentCommentObj.text + " | " + currentCommentObj.timestamp + "</div>";
+    let currentCommentContent = "<div class='comment'>" + currentCommentObj.username + " | " + currentCommentObj.text + " | <p class='small'>" + currentCommentObj.timestamp + "</p></div>";
 
     return currentCommentContent;
   }
