@@ -2,14 +2,16 @@
 
 class View {
   constructor() {
-    this.checkmarkElement = document.getElementById("username_free_checkmark");
+
   }
 
   checkmark(action) {
+    let checkmarkElement = document.getElementById("username_free_checkmark");
+
     if(action === "hide") {
-      this.checkmarkElement.style.visibility = "hidden";
+      checkmarkElement.style.visibility = "hidden";
     } else if(action === "show") {
-      this.checkmarkElement.style.visibility = "visible";
+      checkmarkElement.style.visibility = "visible";
     }
   }
 
@@ -36,6 +38,7 @@ class View {
     let data = {};
     data["username"] = document.getElementById("li_username").value;
     data["password"] = document.getElementById("li_password").value;
+    data["remember_me"] = document.getElementById("li_remember_me").checked;
 
     return data;
   }
@@ -122,4 +125,127 @@ class View {
     document.getElementById("pd_content").style.display = "none";
     document.getElementById("bp_content").style.display = "block";
   }
+
+  appendPost(id, content, onclick) {
+    document.getElementById("scrollingElement").innerHTML += "<div class='displayed_post' id='bp_" + id + "' " + onclick + ">" + content + "</div>";
+  }
+
+  isNotScroll() {
+    let se = document.getElementById("scrollingElement");
+    return se.clientHeight >= se.scrollHeight;
+  }
+
+  hitBottom() {
+    let element = document.getElementById("scrollingElement");
+    return element.scrollHeight -(element.scrollTop + element.clientHeight) <= 5;
+  }
+
+  scrollTop() {
+    document.getElementById("scrollingElement").scrollTop = 0;
+  }
+
+  displayNewPostMessage(displayIt) {
+    let newPostMessageElement = document.getElementById("newPopup");
+
+    if(displayIt) {
+      newPostMessageElement.style.display = "block";
+    } else {
+      newPostMessageElement.style.display = "none";
+    }
+  }
+
+  prependPost(id, content, onclick) {
+    let se = document.getElementById("scrollingElement");
+    se.innerHTML = "<div class='displayed_post' id='bp_" + id + "' " + onclick + ">" + content + "</div>" + se.innerHTML;
+  }
+
+  distanceFromBottom() {
+    let se = document.getElementById("scrollingElement");
+    return se.scrollHeight-se.scrollTop;
+  }
+
+  scrollFromBottom(distance) {
+    let se = document.getElementById("scrollingElement");
+    se.scrollTo(0, se.scrollHeight - distance);
+  }
+
+  nearTop() {
+    return document.getElementById("scrollingElement").scrollTop <= 5;
+  }
+
+  clearBrowseContent() {
+    document.getElementById("scrollingElement").innerHTML = "<div id=\"status_message\">Loading...</div>";
+    document.getElementById("post_details_display").innerHTML = "";
+  }
+
+  fullReset() {
+    this.clearForm("ca_");
+    this.clearForm("li_");
+    this.checkmark("hide");
+    this.clearForm("mp_");
+    this.clearBrowseContent();
+  }
+
+  showLoadingMessage(show) {
+    if(show) {
+      document.getElementById("scrollingElement").innerHTML += "<div id=\"status_message\">Loading...</div>";
+    } else {
+      document.getElementById("status_message").remove();
+    }
+  }
+
+  showNoMorePosts() {
+    document.getElementById("status_message").innerHTML = "No more posts!";
+  }
+
+  clearPostDisplay() {
+    document.getElementById("post_details_display").innerHTML = "";
+  }
+
+  showPostDetails(id, content) {
+    document.getElementById("post_details_display").innerHTML = "<div class='displayed_post_details' id='pd_" + id + "'>" + content + "</div>";
+  }
+
+  prependComment(content) {
+    let cc = document.getElementById("comments_container");
+
+    cc.innerHTML = content + cc.innerHTML;
+  }
+
+  pd_getCommentData() {
+    let data = {};
+    data["text"] = document.getElementById("pd_text").value;
+    data["anon"] = document.getElementById("pd_anon").checked ? "1" : "0";
+
+    return data;
+  }
+
+  checkEnableCommentPostButton() {
+    if(document.getElementById("pd_text").value && document.getElementById("pd_text").value.length < 1000) {
+      document.getElementById("pd_submit").disabled = false;
+    } else {
+      document.getElementById("pd_submit").disabled = true;
+    }
+  }
+
+  pd_disabled(bool) {
+    document.getElementById("pd_text").disabled = bool;
+    document.getElementById("pd_anon").disabled = bool;
+    document.getElementById("pd_submit").disabled = bool;
+  }
+
+  clearCommentForm() {
+    document.getElementById("pd_comment_form").reset();
+  }
+
+  showNoCommentsMessage(bool) {
+    if(bool) {
+      document.getElementById("comments_container").innerHTML = "<div id='no_comments_message'>No comments yet.</div>"
+    } else {
+      if(document.getElementById("no_comments_message")) {
+        document.getElementById("no_comments_message").remove();
+      }
+    }
+  }
+
 }

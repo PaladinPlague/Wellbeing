@@ -12,6 +12,10 @@ function ca_usernameChangeHandler() {
 }
 
 function ca_usernameLookupResponseHandler(response) {
+  if(model.loggedInId !== -1) {
+    return;
+  }
+
   model.usernameLookupInProgress -= 1;
 
   if(model.usernameLookupInProgress === 0) {
@@ -54,6 +58,10 @@ function ca_formSubmission(evt) {
 }
 
 function ca_showResult(response) {
+  if(model.loggedInId !== -1) {
+    return;
+  }
+
   if(response === "1") {
     view.showOutput("ca_","Success!");
     model.freeUsername = "";
@@ -63,6 +71,7 @@ function ca_showResult(response) {
     view.showOutput("ca_","Failed.");
     view.ca_disabled(false);
   }
+
 
 }
 
@@ -81,10 +90,20 @@ function li_formSubmission(evt) {
 }
 
 function li_showResult(text) {
+  if(model.loggedInId !== -1) {
+    return;
+  }
+
   if(text !== "0") {
     view.showOutput("li_","Success!")
-    model.setLoggedInId(text)
-    setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.clearForm("li_");}, 1000);
+    model.login(text)
+
+    if(model.rememberMe) {
+      localStorage.setItem("logged_in_id",text);
+    }
+
+
+    setTimeout(function() {view.switchVisible("login_container", "browse_container"); view.li_disabled(false); view.fullReset(); model.getPosts();}, 1000);
     //setTimeout(function() {window.location.href = "main.html"}, 1000);
   } else {
     view.showOutput("li_","Failed.");
@@ -108,14 +127,22 @@ function mp_formSubmission(evt) {
 }
 
 function mp_showResult(text) {
-  if(text === "1") {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  if(text !== "0") {
     view.showOutput("mp_","Success!");
-    //TODO lookup details for the post that was just posted
+
+    view.clearPostDisplay();
+    model.getRequestedPost(text);
+
     setTimeout(function() {view.switchVisible("makepost_container", "browse_container"); view.switchVisible("bp_content", "pd_content"); view.mp_disabled(false); view.clearForm("mp_");}, 1000);
   } else {
     view.showOutput("mp_","Failed.");
     view.mp_disabled(false);
   }
+
 }
 
 function ca_validation(data) {
@@ -223,11 +250,205 @@ function mp_validation(data) {
   return errorMessage === "";
 }
 
+function bp_showResult(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  if(!json_response) {
+    model.getPosts();
+    return;
+  }
+
+  view.showLoadingMessage(false);
+  model.getPostInProgress = false;
+  let allPosts = JSON.parse(json_response);
+
+  for(let i=0; i<allPosts.length; i++) {
+    let currentPostObj = {post_id:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined};
+    currentPostObj = allPosts[i];
+
+    if(model.mostRecentTimestamp === "") {
+      model.mostRecentTimestamp = currentPostObj.timestamp;
+    }
+
+    let onclick = "onclick=\"pd_browseLookup(" + currentPostObj.post_id + ");\"";
+    view.appendPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
+  }
+
+  view.showLoadingMessage(true);
+
+  if(model.isInitiallyFilling()) {
+    if(view.isNotScroll()) {
+      model.getPosts();
+    } else {
+      model.initialFillDone();
+      model.newestPostsInterval = setInterval(()=>{model.getNewestPosts()}, 10000); //check for new posts every 10 secs
+    }
+  }
+}
+
+function bp_showNewest(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  if(!json_response) {
+    return;
+  }
+
+  let scrollPosition = view.distanceFromBottom();
+
+  let allPosts = JSON.parse(json_response);
+
+  let currentPostObj = {post_id:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined};
+
+  for(let i=0; i<allPosts.length; i++) {
+    currentPostObj = allPosts[i];
+
+    let onclick = "onclick=\"pd_browseLookup(" + currentPostObj.post_id + ");\"";
+    view.prependPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
+  }
+
+  model.mostRecentTimestamp = currentPostObj.timestamp; //the last post fetched
+  view.scrollFromBottom(scrollPosition);
+
+  view.displayNewPostMessage(true);
+  setTimeout(()=>{view.displayNewPostMessage(false)}, 3000);
+}
+
+function infiniteScrollLookup() {
+  if(view.hitBottom()) {
+    if(model.getPostInProgress === false) {
+      model.getPostInProgress = true;
+      model.getPosts();
+
+      if(model.gotAllPosts) {
+        view.showNoMorePosts();
+      }
+    }
+  }
+}
+
+function getLastPostDateAJAXHandler(text) {
+  model.lastPostDate = new Date(text);
+}
+
+function clearNewPostMessage() {
+  if(view.nearTop()) {
+    view.displayNewPostMessage(false);
+  }
+}
+
+function tryAutomaticLogin() {
+  if(localStorage.getItem("logged_in_id")) {
+    let id = localStorage.getItem("logged_in_id");
+    model.login(id);
+    view.switchVisible("login_container", "browse_container");
+    model.getPosts();
+  }
+}
+
+function pd_browseLookup(id) {
+  view.clearPostDisplay();
+  view.switchVisible("bp_content", "pd_content");
+  model.getRequestedPost(id);
+}
+
+function pd_showResult(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  let currentPostObj = {post_id:undefined, text:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined, comments:undefined};
+
+  currentPostObj = JSON.parse(json_response);
+
+
+
+  model.currentPostDetailsId = currentPostObj.post_id;
+  clearInterval(model.newestCommentsInterval);
+  model.newestCommentsInterval = setInterval(()=>{model.updateComments(currentPostObj.post_id)}, 10000);
+
+  view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
+  view.setUpHandler("pd_text", "input", ()=>{view.checkEnableCommentPostButton()});
+  view.setUpHandler("pd_comment_form", "submit", pd_commentFormSubmission);
+
+  if(currentPostObj.comments.length) {
+    model.newestCommentTimestamp = currentPostObj.comments[0].timestamp;
+  } else {
+    model.newestCommentTimestamp = currentPostObj.timestamp; //if there are no comments just use the post timestamp to check for new comments
+    view.showNoCommentsMessage(true);
+  }
+
+
+}
+
+function pd_showNewComments(json_response) {
+  model.commentSubmitUpdateInProgress -= 1;
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  if(!json_response) {
+    return;
+  }
+
+  if(model.commentSubmitUpdateInProgress === 0) {
+    view.showNoCommentsMessage(false);
+
+    let allComments = JSON.parse(json_response);
+
+    if(allComments[0].post_id !== model.currentPostDetailsId) {
+      return;
+    }
+
+    let currentPostObj = {text:undefined, timestamp:undefined, username:undefined};
+    for(let i=0; i<allComments.length; i++) {
+      currentPostObj = allComments[i];
+
+      view.prependComment(model.constructCommentContent(currentPostObj));
+    }
+
+    model.newestCommentTimestamp = currentPostObj.timestamp; //the last comment fetched
+  }
+}
+
+function pd_commentFormSubmission(evt) {
+  evt.preventDefault();
+
+  let data = view.pd_getCommentData();
+
+  model.makeCommentFormSubmission(data);
+  view.pd_disabled(true);
+}
+
+function pd_commentShowResult(text) {
+  view.pd_disabled(false);
+
+  if(text === "1") {
+    view.clearCommentForm();
+    view.checkEnableCommentPostButton();
+    model.updateComments(model.currentPostDetailsId);
+  }
+}
+
+function getFirstPostDateAJAXHandler(text) {
+  model.firstPostDate = new Date(text);
+}
+
 function allHandlers() {
   model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
   model.setCreateAccountAJAXHandler(ca_showResult)
   model.setLoginAJAXHandler(li_showResult);
   model.setMakePostAJAXHandler(mp_showResult);
+  model.setGetPostsAJAXHandler(bp_showResult);
+  model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
+  model.setGetNewestPostsAJAXHandler(bp_showNewest);
+  model.setGetRequestedPostAJAXHandler(pd_showResult);
+  model.setUpdateCommentsAJAXHandler(pd_showNewComments);
+  model.setMakeCommentAJAXHandler(pd_commentShowResult);
+  model.setGetFirstPostDateAJAXHandler(getFirstPostDateAJAXHandler);
 
   view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
   view.setUpHandler("ca_form", "submit", ca_formSubmission);
@@ -241,17 +462,26 @@ function allHandlers() {
   view.setUpHandler("ca_show_password", "click", () => {view.ca_showPasswordToggle()});
   view.setUpHandler("li_show_password", "click", () => {view.li_showPasswordToggle()});
 
+  view.setUpHandler("scrollingElement", "scroll", () =>{clearNewPostMessage(); infiniteScrollLookup();});
+
+  view.setUpHandler("newPopup", "click", ()=>{view.scrollTop()});
+
   // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
-  view.setUpHandler("temp_acc", "click", () => {view.switchVisible("li_content", "ca_content")});
-  view.setUpHandler("temp_golog", "click", () => {view.switchVisible("ca_content", "li_content")});
-  view.setUpHandler("temp_logout1", "click", () => {view.switchVisible("browse_container", "login_container")});
-  view.setUpHandler("temp_post1", "click", () => {view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_details", "click", () => {view.switchVisible("bp_content", "pd_content")});
-  view.setUpHandler("temp_logout2", "click", () => {view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
-  view.setUpHandler("temp_post2", "click", () => {view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_browse", "click", () => {view.switchVisible("pd_content", "bp_content")});
-  view.setUpHandler("temp_logout3", "click", () => {view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
-  view.setUpHandler("temp_main", "click", () => {view.switchVisible("makepost_container", "browse_container")});
+  view.setUpHandler("temp_acc", "click", (ev) => {ev.preventDefault(); view.switchVisible("li_content", "ca_content")});
+  view.setUpHandler("temp_golog", "click", (ev) => {ev.preventDefault(); view.switchVisible("ca_content", "li_content")});
+  view.setUpHandler("temp_logout1", "click", (ev) => {ev.preventDefault(); model.logout(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post1", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
+  // view.setUpHandler("temp_details", "click", (ev) => {ev.preventDefault(); view.switchVisible("bp_content", "pd_content")});
+  view.setUpHandler("temp_totop", "click", (ev) => {ev.preventDefault(); view.scrollTop();});
+  view.setUpHandler("temp_logout2", "click", (ev) => {ev.preventDefault(); model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
+  view.setUpHandler("temp_post2", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
+  view.setUpHandler("temp_browse", "click", (ev) => {ev.preventDefault(); view.switchVisible("pd_content", "bp_content")});
+  view.setUpHandler("temp_logout3", "click", (ev) => {ev.preventDefault(); model.logout(); view.logout_showBrowse(); view.switchVisible("makepost_container", "login_container")});
+  view.setUpHandler("temp_main", "click", (ev) => {ev.preventDefault(); view.switchVisible("makepost_container", "browse_container")});
 }
 
 allHandlers();
+model.getLastPostDate();
+model.getFirstPostDate();
+tryAutomaticLogin();
+
