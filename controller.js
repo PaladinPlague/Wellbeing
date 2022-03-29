@@ -133,8 +133,10 @@ function mp_showResult(text) {
 
   if(text !== "0") {
     view.showOutput("mp_","Success!");
-    //TODO lookup details for the post that was just posted, id = text
-    console.log(text);
+
+    view.clearPostDisplay();
+    model.getRequestedPost(text);
+
     setTimeout(function() {view.switchVisible("makepost_container", "browse_container"); view.switchVisible("bp_content", "pd_content"); view.mp_disabled(false); view.clearForm("mp_");}, 1000);
   } else {
     view.showOutput("mp_","Failed.");
@@ -270,8 +272,7 @@ function bp_showResult(json_response) {
       model.mostRecentTimestamp = currentPostObj.timestamp;
     }
 
-    //TODO replace with post details lookup of given id
-    let onclick = "onclick=\"console.log(" + currentPostObj.post_id + ");\"";
+    let onclick = "onclick=\"pd_browseLookup(" + currentPostObj.post_id + ");\"";
     view.appendPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
   }
 
@@ -305,8 +306,7 @@ function bp_showNewest(json_response) {
   for(let i=0; i<allPosts.length; i++) {
     currentPostObj = allPosts[i];
 
-    //TODO replace with post details lookup of given id
-    let onclick = "onclick=\"console.log(" + currentPostObj.post_id + ");\"";
+    let onclick = "onclick=\"pd_browseLookup(" + currentPostObj.post_id + ");\"";
     view.prependPost(currentPostObj.post_id, model.constructBrowsePostContent(currentPostObj), onclick);
   }
 
@@ -349,6 +349,86 @@ function tryAutomaticLogin() {
   }
 }
 
+function pd_browseLookup(id) {
+  view.clearPostDisplay();
+  view.switchVisible("bp_content", "pd_content");
+  model.getRequestedPost(id);
+}
+
+function pd_showResult(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  let currentPostObj = {post_id:undefined, text:undefined, title:undefined, timestamp:undefined, username:undefined, hasImg:undefined, comments:undefined};
+
+  currentPostObj = JSON.parse(json_response);
+
+  if(currentPostObj.comments.length) {
+    model.newestCommentTimestamp = currentPostObj.comments[0].timestamp;
+  } else {
+    model.newestCommentTimestamp = currentPostObj.timestamp; //if there are no comments just use the post timestamp to check for new comments
+  }
+
+  model.currentPostDetailsId = currentPostObj.post_id;
+  clearInterval(model.newestCommentsInterval);
+  model.newestCommentsInterval = setInterval(()=>{console.log("gone");
+
+    setTimeout(()=>{model.updateComments(currentPostObj.post_id)}, 2000)}, 10000);
+
+  view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
+  view.setUpHandler("pd_text", "input", ()=>{view.checkEnableCommentPostButton()});
+  view.setUpHandler("pd_comment_form", "submit", pd_commentFormSubmission);
+}
+
+function pd_showNewComments(json_response) {
+  if(model.loggedInId === -1) {
+    return;
+  }
+
+  if(!json_response) {
+    return;
+  }
+  console.log("received");
+  model.commentSubmitUpdateInProgress -= 1;
+
+  if(model.commentSubmitUpdateInProgress === 0) {
+    let allComments = JSON.parse(json_response);
+
+    if(allComments[0].post_id !== model.currentPostDetailsId) {
+      return;
+    }
+
+    let currentPostObj = {text:undefined, timestamp:undefined, username:undefined};
+    for(let i=0; i<allComments.length; i++) {
+      currentPostObj = allComments[i];
+
+      view.prependComment(model.constructCommentContent(currentPostObj));
+    }
+
+    model.newestCommentTimestamp = currentPostObj.timestamp; //the last comment fetched
+  }
+}
+
+function pd_commentFormSubmission(evt) {
+  evt.preventDefault();
+
+  let data = view.pd_getCommentData();
+
+  model.makeCommentFormSubmission(data);
+  view.pd_disabled(true);
+}
+
+function pd_commentShowResult(text) {
+  view.pd_disabled(false);
+
+  if(text === "1") {
+    view.clearCommentForm();
+    view.checkEnableCommentPostButton();
+    model.updateComments(model.currentPostDetailsId);
+  }
+}
+
 function allHandlers() {
   model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
   model.setCreateAccountAJAXHandler(ca_showResult)
@@ -357,6 +437,9 @@ function allHandlers() {
   model.setGetPostsAJAXHandler(bp_showResult);
   model.setGetLastPostDateAJAXHandler(getLastPostDateAJAXHandler);
   model.setGetNewestPostsAJAXHandler(bp_showNewest);
+  model.setGetRequestedPostAJAXHandler(pd_showResult);
+  model.setUpdateCommentsAJAXHandler(pd_showNewComments);
+  model.setMakeCommentAJAXHandler(pd_commentShowResult);
 
   view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
   view.setUpHandler("ca_form", "submit", ca_formSubmission);
@@ -372,12 +455,14 @@ function allHandlers() {
 
   view.setUpHandler("scrollingElement", "scroll", () =>{clearNewPostMessage(); infiniteScrollLookup();});
 
+  view.setUpHandler("newPopup", "click", ()=>{view.scrollTop()});
+
   // view.setUpHandler("temp_login", "click", () => {view.switchVisible("login_container", "browse_container")});
   view.setUpHandler("temp_acc", "click", (ev) => {ev.preventDefault(); view.switchVisible("li_content", "ca_content")});
   view.setUpHandler("temp_golog", "click", (ev) => {ev.preventDefault(); view.switchVisible("ca_content", "li_content")});
   view.setUpHandler("temp_logout1", "click", (ev) => {ev.preventDefault(); model.logout(); view.switchVisible("browse_container", "login_container")});
   view.setUpHandler("temp_post1", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
-  view.setUpHandler("temp_details", "click", (ev) => {ev.preventDefault(); view.switchVisible("bp_content", "pd_content")});
+  // view.setUpHandler("temp_details", "click", (ev) => {ev.preventDefault(); view.switchVisible("bp_content", "pd_content")});
   view.setUpHandler("temp_totop", "click", (ev) => {ev.preventDefault(); view.scrollTop();});
   view.setUpHandler("temp_logout2", "click", (ev) => {ev.preventDefault(); model.logout(); view.logout_showBrowse(); view.switchVisible("browse_container", "login_container")});
   view.setUpHandler("temp_post2", "click", (ev) => {ev.preventDefault(); view.switchVisible("browse_container", "makepost_container")});
@@ -390,20 +475,3 @@ allHandlers();
 model.getLastPostDate();
 tryAutomaticLogin();
 
-
-function pd_lookup() {
-
-}
-
-function pd_showResult(json_response) {
-  //model.constructPostDetailsContent
-  //view.showPostDetails
-}
-
-function pd_showNewComment(json_response) {
-  //display new comments - prepend using view method view.prependComment
-  //use model.constructCommentContent
-}
-
-model.setGetRequestedPostAJAXHandler(pd_showResult);
-model.setUpdateCommentsAJAXHandler(pd_showNewComment)
