@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-h1,.displayed_post > p, .displayed_post_details > p {
+h1,.displayed_post > p, .displayed_post_details > p, .comment > p {
   margin:0;
 }
 
@@ -189,4 +189,28 @@ textarea {
 #li_form_container, #ca_form_container, #mp_form_container {
   height:90%;
   overflow-y:scroll;
+}
+
+
+
+
+.comment {
+  margin-bottom: 5vmin;
+}
+
+#comments_container{
+  border: 2vmin solid #2f3656;
+  background: #232348;
+  padding: 2%;
+  margin-bottom: 2vmin;
+}
+
+.comment_username {
+  margin-top: 2.5vmin;
+  font-size: 70%;
+}
+
+.comment_timestamp{
+  font-size: 50%;
+  margin-top: 1.5vmin;
 }
