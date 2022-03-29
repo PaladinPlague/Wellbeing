@@ -9,6 +9,13 @@ if(isset($_GET["last"])) {
 
   echo substr($row["timestamp"],0,10);
 
+} else if(isset($_GET["first"])) {
+  $sql = "SELECT timestamp FROM posts ORDER BY timestamp DESC LIMIT 1;";
+  $result = execute_query($conn, $sql);
+  $row = $result->fetch_assoc();
+
+  echo substr($row["timestamp"],0,10);
+
 } else if(isset($_GET["newest"])) {
   $newest = $_GET["newest"];
 

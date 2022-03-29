@@ -433,6 +433,11 @@ function pd_commentShowResult(text) {
   }
 }
 
+function getFirstPostDateAJAXHandler(text) {
+  model.firstPostDate = new Date(text);
+}
+
+
 function allHandlers() {
   model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
   model.setCreateAccountAJAXHandler(ca_showResult)
@@ -444,6 +449,7 @@ function allHandlers() {
   model.setGetRequestedPostAJAXHandler(pd_showResult);
   model.setUpdateCommentsAJAXHandler(pd_showNewComments);
   model.setMakeCommentAJAXHandler(pd_commentShowResult);
+  model.setGetFirstPostDateAJAXHandler(getFirstPostDateAJAXHandler);
 
   view.setUpHandler("ca_username", "change", ca_usernameChangeHandler);
   view.setUpHandler("ca_form", "submit", ca_formSubmission);
@@ -477,5 +483,6 @@ function allHandlers() {
 
 allHandlers();
 model.getLastPostDate();
+model.getFirstPostDate();
 tryAutomaticLogin();
 

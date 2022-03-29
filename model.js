@@ -18,6 +18,7 @@ class Model {
     this.newestCommentTimestamp =  "";
     this.newestCommentsInterval = null
     this.commentSubmitUpdateInProgress = 0;
+    this.firstPostDate = null;
   }
 
   doAJAXPOST(url, formData, handler){
@@ -109,10 +110,14 @@ class Model {
   }
 
   getPosts() {
-    if(this.lastUpdateDate === null) {
-      this.lastUpdateDate = new Date();
+    if(this.firstPostDate && this.firstPostDate < this.lastUpdateDate) {
+      this.lastUpdateDate = this.firstPostDate;
     } else {
-      this.lastUpdateDate.setDate(this.lastUpdateDate.getDate() - 1);
+      if(this.lastUpdateDate === null) {
+        this.lastUpdateDate = new Date();
+      } else {
+        this.lastUpdateDate.setDate(this.lastUpdateDate.getDate() - 1);
+      }
     }
 
     if(!this.isPastLastPost(this.getLookupDateString())) {
@@ -273,5 +278,13 @@ class Model {
 
   setMakeCommentAJAXHandler(handler) {
     this.makeCommentAJAXHandler = handler;
+  }
+
+  getFirstPostDate() {
+    this.doAJAXGET("get_post.php", "?first=true", this.getFirstPostDateAJAXHandler);
+  }
+
+  setGetFirstPostDateAJAXHandler(handler) {
+    this.getFirstPostDateAJAXHandler = handler;
   }
 }

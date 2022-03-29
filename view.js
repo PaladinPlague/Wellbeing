@@ -137,7 +137,7 @@ class View {
 
   hitBottom() {
     let element = document.getElementById("scrollingElement");
-    return element.scrollHeight -(element.scrollTop + element.clientHeight) <= 1;
+    return element.scrollHeight -(element.scrollTop + element.clientHeight) <= 5;
   }
 
   scrollTop() {
