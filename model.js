@@ -210,7 +210,6 @@ class Model {
   }
 
   updateComments(id) {
-    console.log("sent");
     model.commentSubmitUpdateInProgress += 1;
     this.doAJAXGET("update_comments.php", "?id="+id +"&latest="+encodeURIComponent(this.newestCommentTimestamp), this.updateCommentsAJAXHandler);
   }

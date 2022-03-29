@@ -11,8 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
 
-  <!--  normalise.css taken from https://necolas.github.io/normalize.css/ -->
-  <link rel="stylesheet" href="normalise.css">
+
   <link rel="stylesheet" href="styles.css">
 
 </head>
@@ -24,6 +23,7 @@
 <!--      <a id="temp_login" href="#">Login</a>-->
       <a id="temp_acc" href="#">Create an Account</a>
     </div>
+    <div id="li_form_container">
     <h1>Login</h1>
 
     <form id="li_form" action="#" method="POST">
@@ -55,12 +55,15 @@
     </form>
 
     <p id="li_output"></p>
+    </div>
 
   </div>
   <div id="ca_content" class="content">
     <div id="ca_nav_bar" class="nav_bar">
       <a id="temp_golog" href="#">Back to Login</a>
     </div>
+
+    <div id="ca_form_container">
     <h1>Create an Account</h1>
 
     <form id="ca_form" action="#" method="POST">
@@ -92,7 +95,7 @@
     </form>
 
     <p id="ca_output"></p>
-
+    </div>
 
   </div>
 </div>
@@ -133,6 +136,7 @@
       <a id="temp_logout3" href="#">Logout</a>
       <a id="temp_main" href="#">Cancel</a>
     </div>
+    <div id="mp_form_container">
     <h1>Make Post</h1>
     <form id="mp_form" action="#" method="POST" enctype="multipart/form-data">
       <p>
@@ -161,7 +165,7 @@
 
     </form>
     <p id="mp_output"></p>
-
+    </div>
   </div>
 </div>
 

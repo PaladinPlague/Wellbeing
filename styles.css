@@ -6,6 +6,11 @@ h1,.displayed_post > p, .displayed_post_details > p {
   margin:0;
 }
 
+input {
+  font-size:100%;
+  margin:0;
+}
+
 .displayed_post_details > p {
   margin-bottom: 10vmin;
 }
@@ -104,14 +109,13 @@ img {
   position:absolute;
   top:10vh;
   width:80%;
-  margin:5% 10%;
+  margin:calc(2vh + 1vmin) 10%;
   display:none;
   padding:2%;
   text-align:center;
-  background-color:blue;
-  color:white;
+  background-color:#161656;
   box-sizing: border-box;
-  border:1vmin solid #40A0ff;
+  border:1vmin solid #2f36EA;
 }
 
 input[type=text], input[type=password], textarea{
@@ -126,6 +130,7 @@ input[type=text], input[type=password], textarea{
 textarea {
   height:15vh;
   resize:none;
+  font-family:inherit;
 }
 
 .submit_button {
@@ -179,4 +184,9 @@ textarea {
 #pd_comments_section {
   border-top: 1vmin solid rgb(85, 108, 201);
   padding-top:4vmin;
+}
+
+#li_form_container, #ca_form_container, #mp_form_container {
+  height:90%;
+  overflow-y:scroll;
 }

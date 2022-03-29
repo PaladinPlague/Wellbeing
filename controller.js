@@ -364,24 +364,28 @@ function pd_showResult(json_response) {
 
   currentPostObj = JSON.parse(json_response);
 
-  if(currentPostObj.comments.length) {
-    model.newestCommentTimestamp = currentPostObj.comments[0].timestamp;
-  } else {
-    model.newestCommentTimestamp = currentPostObj.timestamp; //if there are no comments just use the post timestamp to check for new comments
-  }
+
 
   model.currentPostDetailsId = currentPostObj.post_id;
   clearInterval(model.newestCommentsInterval);
-  model.newestCommentsInterval = setInterval(()=>{console.log("gone");
-
-    setTimeout(()=>{model.updateComments(currentPostObj.post_id)}, 2000)}, 10000);
+  model.newestCommentsInterval = setInterval(()=>{model.updateComments(currentPostObj.post_id)}, 10000);
 
   view.showPostDetails(currentPostObj.post_id, model.constructPostDetailsContent(currentPostObj));
   view.setUpHandler("pd_text", "input", ()=>{view.checkEnableCommentPostButton()});
   view.setUpHandler("pd_comment_form", "submit", pd_commentFormSubmission);
+
+  if(currentPostObj.comments.length) {
+    model.newestCommentTimestamp = currentPostObj.comments[0].timestamp;
+  } else {
+    model.newestCommentTimestamp = currentPostObj.timestamp; //if there are no comments just use the post timestamp to check for new comments
+    view.showNoCommentsMessage(true);
+  }
+
+
 }
 
 function pd_showNewComments(json_response) {
+  model.commentSubmitUpdateInProgress -= 1;
   if(model.loggedInId === -1) {
     return;
   }
@@ -389,10 +393,10 @@ function pd_showNewComments(json_response) {
   if(!json_response) {
     return;
   }
-  console.log("received");
-  model.commentSubmitUpdateInProgress -= 1;
 
   if(model.commentSubmitUpdateInProgress === 0) {
+    view.showNoCommentsMessage(false);
+
     let allComments = JSON.parse(json_response);
 
     if(allComments[0].post_id !== model.currentPostDetailsId) {
