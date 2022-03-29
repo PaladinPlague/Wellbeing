@@ -19,6 +19,7 @@ class Model {
     this.newestCommentsInterval = null
     this.commentSubmitUpdateInProgress = 0;
     this.firstPostDate = null;
+    this.skipped = false;
   }
 
   doAJAXPOST(url, formData, handler){
@@ -110,8 +111,16 @@ class Model {
   }
 
   getPosts() {
-    if(this.firstPostDate && this.firstPostDate < this.lastUpdateDate) {
-      this.lastUpdateDate = this.firstPostDate;
+    if(!this.skipped && this.firstPostDate && this.firstPostDate < this.lastUpdateDate) {
+      this.skipped = true
+      let sameDate = (this.getLookupDateString(this.firstPostDate) === this.getLookupDateString(this.lastUpdateDate));
+      if(!sameDate) {
+        this.lastUpdateDate = this.firstPostDate;
+      } else {
+        this.lastUpdateDate.setDate(this.lastUpdateDate.getDate() - 1);
+      }
+
+
     } else {
       if(this.lastUpdateDate === null) {
         this.lastUpdateDate = new Date();
@@ -120,8 +129,8 @@ class Model {
       }
     }
 
-    if(!this.isPastLastPost(this.getLookupDateString())) {
-      this.doAJAXGET("get_post.php", "?date="+this.getLookupDateString(), this.getPostsAJAXHAndler);
+    if(!this.isPastLastPost(this.getLookupDateString(this.lastUpdateDate))) {
+      this.doAJAXGET("get_post.php", "?date="+this.getLookupDateString(this.lastUpdateDate), this.getPostsAJAXHAndler);
     } else {
       this.getPostInProgress = false;
       this.gotAllPosts = true;
@@ -133,10 +142,10 @@ class Model {
     this.getPostsAJAXHAndler = handler;
   }
 
-  getLookupDateString() {
-    let dd = String(this.lastUpdateDate.getDate()).padStart(2, '0');
-    let mm = String(this.lastUpdateDate.getMonth() + 1).padStart(2, '0');
-    let yyyy = this.lastUpdateDate.getFullYear();
+  getLookupDateString(date) {
+    let dd = String(date.getDate()).padStart(2, '0');
+    let mm = String(date.getMonth() + 1).padStart(2, '0');
+    let yyyy = date.getFullYear();
 
     return yyyy + "-" + mm + "-" + dd;
   }
@@ -181,6 +190,7 @@ class Model {
     this.currentPostDetailsId = 0;
     this.newestCommentTimestamp =  "";
     this.commentSubmitUpdateInProgress = 0;
+    this.skipped = false;
     clearInterval(this.newestPostsInterval);
     clearInterval(this.newestCommentsInterval);
   }

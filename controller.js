@@ -437,7 +437,6 @@ function getFirstPostDateAJAXHandler(text) {
   model.firstPostDate = new Date(text);
 }
 
-
 function allHandlers() {
   model.setUsernameLookupAJAXHandler(ca_usernameLookupResponseHandler);
   model.setCreateAccountAJAXHandler(ca_showResult)
