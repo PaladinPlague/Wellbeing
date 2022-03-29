@@ -238,4 +238,14 @@ class View {
     document.getElementById("pd_comment_form").reset();
   }
 
+  showNoCommentsMessage(bool) {
+    if(bool) {
+      document.getElementById("comments_container").innerHTML = "<div id='no_comments_message'>No comments yet.</div>"
+    } else {
+      if(document.getElementById("no_comments_message")) {
+        document.getElementById("no_comments_message").remove();
+      }
+    }
+  }
+
 }
