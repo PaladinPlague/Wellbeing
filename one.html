@@ -11,7 +11,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
 
-  <link rel="stylesheet" href="health.css">
+  <!--  normalise.css taken from https://necolas.github.io/normalize.css/ -->
+  <link rel="stylesheet" href="normalise.css">
+  <link rel="stylesheet" href="styles.css">
 
 </head>
 <body>
@@ -19,20 +21,20 @@
 <div id="login_container" class="content_container" style="display:block;">
   <div id="li_content" class="content" style="display:block;">
     <div id="li_nav_bar" class="nav_bar">
-<!--      <a id="temp_login" href="#" style="color:blue">Login</a>-->
-      <a id="temp_acc" href="#">Create</a>
+<!--      <a id="temp_login" href="#">Login</a>-->
+      <a id="temp_acc" href="#">Create an Account</a>
     </div>
     <h1>Login</h1>
 
     <form id="li_form" action="#" method="POST">
 
       <p>
-        <label for="li_username">Username:</label>
+        <label for="li_username">Username:</label><br/>
         <input type="text" id="li_username" name="li_username" placeholder="Enter Username">
       </p>
 
       <p>
-        <label for="li_password">Password:</label>
+        <label for="li_password">Password:</label><br/>
         <input type="password" id="li_password" name="li_password" placeholder="Enter Password">
       </p>
 
@@ -57,29 +59,29 @@
   </div>
   <div id="ca_content" class="content">
     <div id="ca_nav_bar" class="nav_bar">
-      <a id="temp_golog" href="#">GoLog</a>
+      <a id="temp_golog" href="#">Back to Login</a>
     </div>
     <h1>Create an Account</h1>
 
     <form id="ca_form" action="#" method="POST">
       <p>
-        <label for="ca_username">Username:</label>
+        <label for="ca_username">Username:</label><br/>
         <input type="text" id="ca_username" name="ca_username" placeholder="Enter Username">
         <span id="username_free_checkmark">&#10003;</span>
       </p>
 
       <p>
-        <label for="ca_password">Password:</label>
+        <label for="ca_password">Password:</label><br/>
         <input type="password" id="ca_password" name="ca_password" placeholder="Enter Password">
       </p>
 
       <p>
-        <label for="ca_confirm_password">Confirm Password:</label>
+        <label for="ca_confirm_password">Confirm Password:</label><br/>
         <input type="password" id="ca_confirm_password" name="ca_confirm_password" placeholder="Confirm Password">
       </p>
 
       <p>
-        <label for="ca_show_password">Show password</label>
+        <label for="ca_show_password">Show passwords</label>
         <input type="checkbox" id="ca_show_password">
       </p>
 
@@ -99,9 +101,9 @@
   <div id="bp_content" class="content" style="display:block;">
     <div id="bp_nav_bar" class="nav_bar">
       <a id="temp_logout1" href="#">Logout</a>
-      <a id="temp_post1" href="#">Let Me Post</a>
+      <a id="temp_post1" href="#">Make a Post</a>
 <!--      <a id="temp_details" href="#" style="color:green">Details</a>-->
-      <a id="temp_totop" href="#">Top</a>
+      <a id="temp_totop" href="#">To Top</a>
     </div>
 
     <div id="scrollingElement">
@@ -116,7 +118,7 @@
   <div id="pd_content" class="content">
     <div id="pd_nav_bar" class="nav_bar">
       <a id="temp_logout2" href="#">Logout</a>
-      <a id="temp_post2" href="#">Let Me Post</a>
+      <a id="temp_post2" href="#">Make a Post</a>
       <a id="temp_browse" href="#">Browse</a>
     </div>
 
@@ -129,18 +131,18 @@
   <div id="mp_content" class="content" style="display:block">
     <div id="mp_nav_bar" class="nav_bar">
       <a id="temp_logout3" href="#">Logout</a>
-      <a id="temp_main" href="#">Make Post/Cancel</a>
+      <a id="temp_main" href="#">Cancel</a>
     </div>
     <h1>Make Post</h1>
     <form id="mp_form" action="#" method="POST" enctype="multipart/form-data">
       <p>
-        <label for="mp_title">Title:</label>
+        <label for="mp_title">Title:</label><br/>
         <input type="text" id="mp_title" name="mp_title">
       </p>
 
       <p>
-        <label for="mp_body">Body:</label>
-        <input type="text" id="mp_body" name="mp_body">
+        <label for="mp_body">Body:</label><br/>
+        <textarea id="mp_body" name="mp_body"></textarea>
       </p>
 
       <p>
